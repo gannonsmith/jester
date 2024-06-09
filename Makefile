@@ -10,6 +10,8 @@ all: $(appname)
 
 $(appname): $(objects)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) 
+	rm -f $(objects)
 
 clean:
 	rm -f $(objects)
+	rm chess
