@@ -9,6 +9,7 @@ Hopefully it will be better than me.
 Board Encodings:
 
 Black: lowercase
+
 White: uppercase
 
 King:   Kk

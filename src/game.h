@@ -1,3 +1,4 @@
+#include "player.h"
 
 class Game {
     public:
@@ -7,5 +8,6 @@ class Game {
     void print_board();
 
     private:
-
+    White white;
+    Black black;
 };

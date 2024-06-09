@@ -3,6 +3,7 @@
 
 Game::Game() {
     std::cout << "game constructed" << std::endl;
+
 }
 
 void Game::run() {
@@ -10,5 +11,5 @@ void Game::run() {
 }
 
 void Game::print_board() {
-
+    
 }
