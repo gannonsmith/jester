@@ -1,6 +1,14 @@
+#include <iostream>
 #include "game.h"
 
-void Game::print_board() {
-    
+Game::Game() {
+    std::cout << "game constructed" << std::endl;
 }
 
+void Game::run() {
+    std::cout << "game running" << std::endl;
+}
+
+void Game::print_board() {
+
+}
