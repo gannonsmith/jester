@@ -4,10 +4,9 @@
 class Player {
     public:
 
-    virtual std::vector<std::vector<char>>* get_board();
+    Player();
+    virtual std::vector<std::vector<char>>& get_board();
 
-
-    private:
     std::vector<std::vector<char>> display_board;
 
     KingBoard king_board;
@@ -20,14 +19,17 @@ class Player {
 
 class White : public Player {
     public:
-    std::vector<std::vector<char>>* get_board();
+    White();
+    
+    std::vector<std::vector<char>>& get_board();
 
     private:
 };
 
 class Black : public Player {
     public:
-    std::vector<std::vector<char>>* get_board();
+    Black();
+    std::vector<std::vector<char>>& get_board();
 
 
     private:

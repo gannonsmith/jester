@@ -1,15 +1,14 @@
 
 class Board {
     public:
-    Board();
+    Board(unsigned long long int bitboard_in);
     unsigned long long int get();
 
-    private:
     unsigned long long int bitboard;
 };
 
 class KingBoard : public Board {
-
+    KingBoard(unsigned long long int bitboard_in): bitboard(bitboard_in);
 };
 
 class QueenBoard : public Board {
