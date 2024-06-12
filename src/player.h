@@ -4,10 +4,8 @@
 class Player {
     public:
 
-    Player();
-    virtual std::vector<std::vector<char>>& get_board();
-
-    std::vector<std::vector<char>> display_board;
+    std::vector<std::vector<char>> get_board();
+    char get(int rank, int file);
 
     KingBoard king_board;
     QueenBoard queen_board;
@@ -19,17 +17,12 @@ class Player {
 
 class White : public Player {
     public:
-    White();
-    
-    std::vector<std::vector<char>>& get_board();
 
     private:
 };
 
 class Black : public Player {
     public:
-    Black();
-    std::vector<std::vector<char>>& get_board();
 
 
     private:
