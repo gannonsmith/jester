@@ -15,6 +15,27 @@ Game::Game() {
 
 void Game::run() {
     std::cout << "game running" << std::endl;
+    int count = 0;
+    std::string move;
+    while (count < 2) {
+        std::vector<std::vector<char>> board(8, std::vector<char>(8));
+
+        std::cout << "White to move" << std::endl;
+        get_board(board, true);
+        print_board(board);
+
+        std::cin >> move;
+        std::cout << "White does move: " << move << std::endl;
+
+        std::cout << "Black to move" << std::endl;
+        get_board(board, false);
+        print_board(board);
+
+        std::cin >> move;
+        std::cout << "Black does move: " << move << std::endl;
+
+        count++;
+    }
 }
 
 void Game::fen_setup(std::string& fen_string) {
