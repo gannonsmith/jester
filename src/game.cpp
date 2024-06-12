@@ -72,7 +72,6 @@ void Game::fen_setup(std::string& fen_string) {
 
 void Game::run() {
     std::cout << "game running" << std::endl;
-    print_board();
 }
 
 void Game::print_board() {
@@ -84,7 +83,7 @@ void Game::print_board() {
             if (white_board[i][j] != '.') {
                 std::cout << white_board[i][j] << " ";
             } else if (black_board[i][j] != '.') {
-                std::cout << black_board[i][j] << " ";
+                std::cout << char(black_board[i][j] + 32) << " ";
             } else {
                 std::cout << ". ";
             }
