@@ -7,7 +7,14 @@ Game::Game() {
     std::string fen;
     std::cin >> fen;
     fen_setup(fen);
-    print_board();
+    std::cout << "Initial Setup:" << std::endl;
+    std::vector<std::vector<char>> board(8, std::vector<char>(8));
+    get_board(board, false);
+    print_board(board);
+}
+
+void Game::run() {
+    std::cout << "game running" << std::endl;
 }
 
 void Game::fen_setup(std::string& fen_string) {
@@ -24,8 +31,7 @@ void Game::fen_setup(std::string& fen_string) {
             continue;
         }
 
-        switch (c)
-        {
+        switch (c) {
         case 'K':
             white.king_board.set(rank, file);
             break;
@@ -70,24 +76,43 @@ void Game::fen_setup(std::string& fen_string) {
     }
 }
 
-void Game::run() {
-    std::cout << "game running" << std::endl;
-}
-
-void Game::print_board() {
+void Game::get_board(std::vector<std::vector<char>>& board, bool is_white) {
     std::vector<std::vector<char>> white_board = white.get_board();
     std::vector<std::vector<char>> black_board = black.get_board();
 
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+            if (is_white) {
+                if (white_board[rank][file] != '.') {
+                    board[rank][file] = white_board[rank][file];
+                } else if (black_board[rank][file] != '.') {
+                    board[rank][file] = char(black_board[rank][file] + 32);
+                } else {
+                    board[rank][file] = '.';
+                }
+            } else {
+                if (white_board[rank][file] != '.') {
+                    board[7 - rank][7 - file] = white_board[rank][file];
+                } else if (black_board[rank][file] != '.') {
+                    board[7 - rank][7 - file] = char(black_board[rank][file] + 32);
+                } else {
+                    board[7 - rank][7 - file] = '.';
+                }
+            }
+        }
+    }
+}
+
+void Game::print_board(std::vector<std::vector<char>>& board) {
+    std::vector<std::vector<char>> white_board = white.get_board();
+    std::vector<std::vector<char>> black_board = black.get_board();
+
+    std::cout << std::endl;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            if (white_board[i][j] != '.') {
-                std::cout << white_board[i][j] << " ";
-            } else if (black_board[i][j] != '.') {
-                std::cout << char(black_board[i][j] + 32) << " ";
-            } else {
-                std::cout << ". ";
-            }
+            std::cout << board[i][j] << ' ';
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }

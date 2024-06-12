@@ -5,7 +5,8 @@ class Game {
     Game();
     void run();
 
-    void print_board();
+    void get_board(std::vector<std::vector<char>>& board, bool is_white);
+    void print_board(std::vector<std::vector<char>>& board);
 
     void fen_setup(std::string& fen_string);
 

@@ -1,16 +1,6 @@
 #include <iostream>
 #include "player.h"
 
-std::vector<std::vector<char>> Player::get_board() {
-    std::vector<std::vector<char>> board(8, std::vector<char>(8));
-    for (int rank = 0; rank < 8; rank++) {
-        for (int file = 0; file < 8; file++) {
-            board[rank][file] = get(rank, file);
-        }
-    }
-    return board;
-}
-
 char Player::get(int rank, int file) {
     int shift_num = ((rank - 8) * 8) + file + 1;
     unsigned long long int bit = 1;
@@ -35,4 +25,13 @@ char Player::get(int rank, int file) {
     return piece;
 }
 
+std::vector<std::vector<char>> Player::get_board() {
+    std::vector<std::vector<char>> board(8, std::vector<char>(8));
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+            board[rank][file] = get(rank, file);
+        }
+    }
+    return board;
+}
 
