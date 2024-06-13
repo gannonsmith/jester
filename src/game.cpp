@@ -9,7 +9,7 @@ Game::Game() {
     fen_setup(fen);
     std::cout << "Initial Setup:" << std::endl;
     std::vector<std::vector<char>> board(8, std::vector<char>(8));
-    get_board(board, false);
+    get_board(board, true);
     print_board(board);
 }
 
@@ -97,28 +97,18 @@ void Game::fen_setup(std::string& fen_string) {
     }
 }
 
-void Game::get_board(std::vector<std::vector<char>>& board, bool is_white) {
+void Game::get_board(std::vector<std::vector<char>>& board) {
     std::vector<std::vector<char>> white_board = white.get_board();
     std::vector<std::vector<char>> black_board = black.get_board();
 
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
-            if (is_white) {
-                if (white_board[rank][file] != '.') {
-                    board[rank][file] = white_board[rank][file];
-                } else if (black_board[rank][file] != '.') {
-                    board[rank][file] = char(black_board[rank][file] + 32);
-                } else {
-                    board[rank][file] = '.';
-                }
+            if (white_board[rank][file] != '.') {
+                board[rank][file] = white_board[rank][file];
+            } else if (black_board[rank][file] != '.') {
+                board[rank][file] = char(black_board[rank][file] + 32);
             } else {
-                if (white_board[rank][file] != '.') {
-                    board[7 - rank][7 - file] = white_board[rank][file];
-                } else if (black_board[rank][file] != '.') {
-                    board[7 - rank][7 - file] = char(black_board[rank][file] + 32);
-                } else {
-                    board[7 - rank][7 - file] = '.';
-                }
+                board[rank][file] = '.';
             }
         }
     }
