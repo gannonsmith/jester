@@ -128,12 +128,13 @@ void Game::print_board(std::vector<std::vector<char>>& board) {
     std::cout << std::endl;
     int h_length = 8;
 
+    std::cout << "   ";
     for (int i = 0; i < h_length; i++) {
         std::cout << " \u23AF\u23AF\u23AF";
     } 
     std::cout << std::endl;
     for (int i = 0; i < 8; i++) {
-        std::cout << '|';
+        std::cout << 8 - i << "  |";
         for (int j = 0; j < 8; j++) {
             std::string piece = get_piece_icon(board[i][j]);
             if (piece == ".") {
@@ -148,10 +149,15 @@ void Game::print_board(std::vector<std::vector<char>>& board) {
             }
         }
         std::cout << std::endl;
+        std::cout << "   ";
         for (int i = 0; i < h_length; i++) {
             std::cout << " \u23AF\u23AF\u23AF";
         } 
         std::cout << std::endl;
+    }
+    std::cout << "  ";
+    for (char c = 'a'; c < 'i'; c++) {
+        std::cout << "   " << c;
     }
     std::cout << std::endl;
 }
