@@ -3,9 +3,9 @@
 
 Game::Game() {
 
-    std::cout << "Enter starting FEN string" << std::endl;
-    std::string fen;
-    std::cin >> fen;
+    std::cout << "Enter starting FEN string:" << std::endl;
+    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    //std::cin >> fen;
     fen_setup(fen);
     std::cout << "Initial Setup:" << std::endl;
     std::vector<std::vector<char>> board(8, std::vector<char>(8));
@@ -125,15 +125,82 @@ void Game::get_board(std::vector<std::vector<char>>& board, bool is_white) {
 }
 
 void Game::print_board(std::vector<std::vector<char>>& board) {
-    std::vector<std::vector<char>> white_board = white.get_board();
-    std::vector<std::vector<char>> black_board = black.get_board();
+    std::cout << std::endl;
+    int h_length = 8;
 
+    for (int i = 0; i < h_length; i++) {
+        std::cout << " \u23AF\u23AF\u23AF";
+    } 
     std::cout << std::endl;
     for (int i = 0; i < 8; i++) {
+        std::cout << '|';
         for (int j = 0; j < 8; j++) {
-            std::cout << board[i][j] << ' ';
+            std::string piece = get_piece_icon(board[i][j]);
+            if (piece == ".") {
+                if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
+                    std::cout << " \u25A0 ";
+                } else {
+                    std::cout << " \u25A1 ";
+                }
+                std::cout << "\uFFE8";
+            } else {
+                std::cout << " " << piece << " \uFFE8";
+            }
         }
+        std::cout << std::endl;
+        for (int i = 0; i < h_length; i++) {
+            std::cout << " \u23AF\u23AF\u23AF";
+        } 
         std::cout << std::endl;
     }
     std::cout << std::endl;
+}
+
+std::string Game::get_piece_icon(char algebraic_piece) {
+    std::string piece_icon;
+    switch (algebraic_piece) {
+    case '.':
+        piece_icon = ".";
+        break;
+    case 'K':
+        piece_icon = "\u2654";
+        break;
+    case 'Q':
+        piece_icon = "\u2655";
+        break;
+    case 'R':
+        piece_icon = "\u2656";
+        break;
+    case 'B':
+        piece_icon = "\u2657";
+        break;
+    case 'N':
+        piece_icon = "\u2658";
+        break;
+    case 'P':
+        piece_icon = "\u2659";
+        break;
+    case 'k':
+        piece_icon = "\u265A";
+        break;
+    case 'q':
+        piece_icon = "\u265B";
+        break;
+    case 'r':
+        piece_icon = "\u265C";
+        break;
+    case 'b':
+        piece_icon = "\u265D";
+        break;
+    case 'n':
+        piece_icon = "\u265E";
+        break;
+    case 'p':
+        piece_icon = "\u265F";
+        break;
+    
+    default:
+        break;
+    }
+    return piece_icon;
 }

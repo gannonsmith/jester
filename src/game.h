@@ -13,4 +13,6 @@ class Game {
     private:
     White white;
     Black black;
+
+    std::string get_piece_icon(char algebraic_piece);
 };
