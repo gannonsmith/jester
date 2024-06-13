@@ -10,6 +10,8 @@ class Game {
 
     void fen_setup(std::string& fen_string);
 
+    bool move(std::string& move);
+
     private:
     White white;
     Black black;

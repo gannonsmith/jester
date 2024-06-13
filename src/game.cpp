@@ -9,29 +9,41 @@ Game::Game() {
     fen_setup(fen);
     std::cout << "Initial Setup:" << std::endl;
     std::vector<std::vector<char>> board(8, std::vector<char>(8));
-    get_board(board, true);
+    get_board(board);
     print_board(board);
+
+    std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
 
 void Game::run() {
     std::cout << "game running" << std::endl;
-    int count = 0;
+
+    std::vector<std::vector<char>> board(8, std::vector<char>(8));
     std::string move;
+    bool valid_move;
+
+    int count = 0;
     while (count < 2) {
-        std::vector<std::vector<char>> board(8, std::vector<char>(8));
+        valid_move = false;
+        while (!valid_move) {
+            std::cout << "White to move" << std::endl;
+            get_board(board);
+            print_board(board);
 
-        std::cout << "White to move" << std::endl;
-        get_board(board, true);
-        print_board(board);
-
-        std::cin >> move;
+            std::cin >> move;
+            valid_move = this->move(move);
+        }
         std::cout << "White does move: " << move << std::endl;
 
-        std::cout << "Black to move" << std::endl;
-        get_board(board, false);
-        print_board(board);
+        valid_move = false;
+        while (!valid_move) {
+            std::cout << "Black to move" << std::endl;
+            get_board(board);
+            print_board(board);
 
-        std::cin >> move;
+            std::cin >> move;
+            valid_move = this->move(move);
+        }
         std::cout << "Black does move: " << move << std::endl;
 
         count++;
