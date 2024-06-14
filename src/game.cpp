@@ -23,7 +23,7 @@ void Game::run() {
     bool valid_move;
 
     int count = 0;
-    while (count < 2) {
+    while (count == 0) {
         valid_move = false;
         while (!valid_move) {
             std::cout << "White to move" << std::endl;
@@ -61,36 +61,38 @@ bool Game::move(std::string& move, bool white_to_move) {
         return false;
     }
 
-    if (!valid_square(move[1], move[2]) || !valid_square(move[4], move[5])) {
-        std::cout << "invalid squares" << std::endl;
+    if (!valid_square(move[2], move[1]) || !valid_square(move[5], move[4])) {
+        std::cout << "invalid square" << std::endl;
         return false;
     }
     
+    if ((white_to_move && move[0] != white.get(move[2], move[1])) ||
+        (!white_to_move && move[0] != white.get(move[2], move[1])))
+    {
+        std::cout << "piece doesn't match starting square" << std::endl;
+        return false;
+    }
 
 
 }
 
 bool Game::valid_piece(char piece, bool white) {
     if (white && 
-        (
-            piece == 'K' || piece == 'Q' || piece == 'R' || piece == 'B' || 
-            piece == 'N' || piece == 'P'
-        )
-    ) {
+        (piece == 'K' || piece == 'Q' || piece == 'R' || piece == 'B' || 
+        piece == 'N' || piece == 'P')) 
+    {
         return true;
     } else if (!white && 
-        (
-            piece == 'k' || piece == 'q' || piece == 'r' || piece == 'b' || 
-            piece == 'n' || piece == 'p'
-        )
-    ) {
+        (piece == 'k' || piece == 'q' || piece == 'r' || piece == 'b' || 
+        piece == 'n' || piece == 'p'))
+    {
         return true;
     } else {
         return false;
     }
 }
 
-bool Game::valid_square(char file, char rank) {
+bool Game::valid_square(char rank, char file) {
     if (rank < '1' || rank > '8' || file < 'a' || 'h' < file) {
         return false;
     } else {
