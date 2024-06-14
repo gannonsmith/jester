@@ -31,7 +31,7 @@ void Game::run() {
             print_board(board);
 
             std::cin >> move;
-            valid_move = this->move(move);
+            valid_move = this->move(move, true);
         }
         std::cout << "White does move: " << move << std::endl;
 
@@ -42,7 +42,7 @@ void Game::run() {
             print_board(board);
 
             std::cin >> move;
-            valid_move = this->move(move);
+            valid_move = this->move(move, false);
         }
         std::cout << "Black does move: " << move << std::endl;
 
@@ -50,14 +50,42 @@ void Game::run() {
     }
 }
 
-bool Game::move(std::string& move) {
+bool Game::move(std::string& move, bool white_to_move) {
     if (move.size() != 6) {
         std::cout << "move string is incorrect length" << std::endl;
         return false;
     }
-
+    // Ne2-e4
+    if (!valid_piece(move[0], white_to_move)) {
+        std::cout << "piece character is incorrect" << std::endl;
+    }
+    
     
 
+}
+
+bool Game::valid_piece(char piece, bool white) {
+    if (white && 
+        (piece == 'K' || 
+        piece == 'Q' || 
+        piece == 'R' || 
+        piece == 'B' || 
+        piece == 'N' || 
+        piece == 'P')
+    ) {
+        return true;
+    } else if (!white && 
+        (piece == 'k' || 
+        piece == 'q' || 
+        piece == 'r' || 
+        piece == 'b' || 
+        piece == 'n' || 
+        piece == 'p')
+    ) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void Game::fen_setup(std::string& fen_string) {

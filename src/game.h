@@ -10,11 +10,12 @@ class Game {
 
     void fen_setup(std::string& fen_string);
 
-    bool move(std::string& move);
-
     private:
     White white;
     Black black;
+
+    bool move(std::string& move, bool white_to_move);
+    bool valid_piece(char piece, bool white);
 
     std::string get_piece_icon(char algebraic_piece);
 };
