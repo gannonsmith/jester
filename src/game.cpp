@@ -60,27 +60,23 @@ bool Game::move(std::string& move, bool white_to_move) {
         std::cout << "piece character is incorrect" << std::endl;
     }
     
-    
+
 
 }
 
 bool Game::valid_piece(char piece, bool white) {
     if (white && 
-        (piece == 'K' || 
-        piece == 'Q' || 
-        piece == 'R' || 
-        piece == 'B' || 
-        piece == 'N' || 
-        piece == 'P')
+        (
+            piece == 'K' || piece == 'Q' || piece == 'R' || piece == 'B' || 
+            piece == 'N' || piece == 'P'
+        )
     ) {
         return true;
     } else if (!white && 
-        (piece == 'k' || 
-        piece == 'q' || 
-        piece == 'r' || 
-        piece == 'b' || 
-        piece == 'n' || 
-        piece == 'p')
+        (
+            piece == 'k' || piece == 'q' || piece == 'r' || piece == 'b' || 
+            piece == 'n' || piece == 'p'
+        )
     ) {
         return true;
     } else {
