@@ -1,16 +1,15 @@
 #include <iostream>
 #include "game.h"
 
-Game::Game() {
+Game::Game(): display_board{8, std::vector<Piece>(8)} {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     //std::cin >> fen;
     fen_setup(fen);
     std::cout << "Initial Setup:" << std::endl;
-    std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
-    get_board(board);
-    print_board(board);
+    refresh_board();
+    print_board();
 
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
@@ -27,8 +26,8 @@ void Game::run() {
         valid_move = false;
         while (!valid_move) {
             std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            get_board(board);
-            print_board(board);
+            refresh_board();
+            print_board();
 
             std::cin >> move;
             if (move == "q") {
@@ -41,8 +40,8 @@ void Game::run() {
         valid_move = false;
         while (!valid_move) {
             std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            get_board(board);
-            print_board(board);
+            refresh_board();
+            print_board();
 
             std::cin >> move;
             if (move == "q") {
@@ -88,11 +87,12 @@ bool Game::move(std::string& move_str, bool white_to_move) {
     Move move {
         {int(move_str[2]), int(move_str[1])},
         {int(move_str[5]), int(move_str[4])},
+        {1},
         {Piece(move_str[0])},
         move_str[3] == 'x'
     };
 
-    if (!is_valid_move(move)) {
+    if (true) {
         std::cout << "cannot move there" << std::endl;
         return false;
     }
@@ -125,9 +125,11 @@ bool Game::valid_square(char rank, char file) {
     }
 }
 
-bool Game::is_valid_move(Move& move) {
-    //char piece;
-    return true;
+void Game::get_moves() {
+    refresh_board();
+    // white pawns
+    unsigned long long one_forward = white.pawn_board.bitboard << 8;
+    unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
 }
 
 void Game::fen_setup(std::string& fen_string) {
@@ -189,24 +191,24 @@ void Game::fen_setup(std::string& fen_string) {
     }
 }
 
-void Game::get_board(std::vector<std::vector<Piece>>& board) {
+void Game::refresh_board() {
     std::vector<std::vector<Piece>> white_board = white.get_board();
     std::vector<std::vector<Piece>> black_board = black.get_board();
 
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             if (white_board[rank][file] != '.') {
-                board[rank][file] = white_board[rank][file];
+                display_board[rank][file] = white_board[rank][file];
             } else if (black_board[rank][file] != '.') {
-                board[rank][file] = black_board[rank][file];
+                display_board[rank][file] = black_board[rank][file];
             } else {
-                board[rank][file] = Piece::Empty;
+                display_board[rank][file] = Piece::Empty;
             }
         }
     }
 }
 
-void Game::print_board(std::vector<std::vector<Piece>>& board) {
+void Game::print_board() {
     std::cout << std::endl;
     int h_length = 8;
 
@@ -218,7 +220,7 @@ void Game::print_board(std::vector<std::vector<Piece>>& board) {
     for (int i = 0; i < 8; i++) {
         std::cout << 8 - i << "  |";
         for (int j = 0; j < 8; j++) {
-            std::string piece_str = get_piece_icon(board[i][j]);
+            std::string piece_str = get_piece_icon(display_board[i][j]);
             if (piece_str == ".") {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
                     std::cout << " \u25A0 ";

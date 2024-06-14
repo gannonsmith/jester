@@ -17,6 +17,7 @@ enum Piece {
     Empty = '.'
 };
 
+
 class Player {
     public:
 
@@ -34,7 +35,7 @@ class Player {
 class White : public Player {
     public:
     Piece get(Square& square);
-    
+
     private:
 };
 
