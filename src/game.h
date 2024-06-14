@@ -16,6 +16,7 @@ class Game {
 
     bool move(std::string& move, bool white_to_move);
     bool valid_piece(char piece, bool white);
+    bool valid_square(char file, char rank);
 
     std::string get_piece_icon(char algebraic_piece);
 };

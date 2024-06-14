@@ -52,12 +52,18 @@ void Game::run() {
 
 bool Game::move(std::string& move, bool white_to_move) {
     if (move.size() != 6) {
-        std::cout << "move string is incorrect length" << std::endl;
+        std::cout << "move string is invalid length" << std::endl;
         return false;
     }
     // Ne2-e4
     if (!valid_piece(move[0], white_to_move)) {
-        std::cout << "piece character is incorrect" << std::endl;
+        std::cout << "piece character is invalid" << std::endl;
+        return false;
+    }
+
+    if (!valid_square(move[1], move[2]) || !valid_square(move[4], move[5])) {
+        std::cout << "invalid squares" << std::endl;
+        return false;
     }
     
 
@@ -81,6 +87,14 @@ bool Game::valid_piece(char piece, bool white) {
         return true;
     } else {
         return false;
+    }
+}
+
+bool Game::valid_square(char file, char rank) {
+    if (rank < '1' || rank > '8' || file < 'a' || 'h' < file) {
+        return false;
+    } else {
+        return true;
     }
 }
 
