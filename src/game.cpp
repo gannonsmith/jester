@@ -8,7 +8,7 @@ Game::Game() {
     //std::cin >> fen;
     fen_setup(fen);
     std::cout << "Initial Setup:" << std::endl;
-    std::vector<std::vector<char>> board(8, std::vector<char>(8));
+    std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
     get_board(board);
     print_board(board);
 
@@ -18,7 +18,7 @@ Game::Game() {
 void Game::run() {
     std::cout << "game running" << std::endl;
 
-    std::vector<std::vector<char>> board(8, std::vector<char>(8));
+    std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
     std::string move;
     bool valid_move;
 
@@ -26,22 +26,28 @@ void Game::run() {
     while (count == 0) {
         valid_move = false;
         while (!valid_move) {
-            std::cout << "White to move" << std::endl;
+            std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
             get_board(board);
             print_board(board);
 
             std::cin >> move;
+            if (move == "q") {
+                return;
+            }
             valid_move = this->move(move, true);
         }
         std::cout << "White does move: " << move << std::endl;
 
         valid_move = false;
         while (!valid_move) {
-            std::cout << "Black to move" << std::endl;
+            std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
             get_board(board);
             print_board(board);
 
             std::cin >> move;
+            if (move == "q") {
+                return;
+            }
             valid_move = this->move(move, false);
         }
         std::cout << "Black does move: " << move << std::endl;
@@ -50,30 +56,49 @@ void Game::run() {
     }
 }
 
-bool Game::move(std::string& move, bool white_to_move) {
-    if (move.size() != 6) {
+bool Game::move(std::string& move_str, bool white_to_move) {
+    if (move_str.size() != 6) {
         std::cout << "move string is invalid length" << std::endl;
         return false;
     }
-    // Ne2-e4
-    if (!valid_piece(move[0], white_to_move)) {
+    if (!valid_piece(move_str[0], white_to_move)) {
         std::cout << "piece character is invalid" << std::endl;
         return false;
     }
-
-    if (!valid_square(move[2], move[1]) || !valid_square(move[5], move[4])) {
+    if (!valid_square(move_str[2], move_str[1]) ||
+        !valid_square(move_str[5], move_str[4])) 
+    {
         std::cout << "invalid square" << std::endl;
         return false;
     }
+    if (move_str[3] != '-' && move_str[3] != 'x') {
+        std::cout << "capture not specified" << std::endl;
+        return false;
+    }
+
+    Square start_square {int(move_str[2]), int(move_str[1])};
     
-    if ((white_to_move && move[0] != white.get(move[2], move[1])) ||
-        (!white_to_move && move[0] != white.get(move[2], move[1])))
+    if ((white_to_move && move_str[0] != white.get(start_square)) ||
+        (!white_to_move && move_str[0] != black.get(start_square)))
     {
         std::cout << "piece doesn't match starting square" << std::endl;
         return false;
     }
 
+    Move move {
+        {int(move_str[2]), int(move_str[1])},
+        {int(move_str[5]), int(move_str[4])},
+        {Piece(move_str[0])},
+        move_str[3] == 'x'
+    };
 
+    if (!is_valid_move(move)) {
+        std::cout << "cannot move there" << std::endl;
+        return false;
+    }
+
+    //make move
+    return true;
 }
 
 bool Game::valid_piece(char piece, bool white) {
@@ -98,6 +123,11 @@ bool Game::valid_square(char rank, char file) {
     } else {
         return true;
     }
+}
+
+bool Game::is_valid_move(Move& move) {
+    //char piece;
+    return true;
 }
 
 void Game::fen_setup(std::string& fen_string) {
@@ -159,24 +189,24 @@ void Game::fen_setup(std::string& fen_string) {
     }
 }
 
-void Game::get_board(std::vector<std::vector<char>>& board) {
-    std::vector<std::vector<char>> white_board = white.get_board();
-    std::vector<std::vector<char>> black_board = black.get_board();
+void Game::get_board(std::vector<std::vector<Piece>>& board) {
+    std::vector<std::vector<Piece>> white_board = white.get_board();
+    std::vector<std::vector<Piece>> black_board = black.get_board();
 
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             if (white_board[rank][file] != '.') {
                 board[rank][file] = white_board[rank][file];
             } else if (black_board[rank][file] != '.') {
-                board[rank][file] = char(black_board[rank][file] + 32);
+                board[rank][file] = black_board[rank][file];
             } else {
-                board[rank][file] = '.';
+                board[rank][file] = Piece::Empty;
             }
         }
     }
 }
 
-void Game::print_board(std::vector<std::vector<char>>& board) {
+void Game::print_board(std::vector<std::vector<Piece>>& board) {
     std::cout << std::endl;
     int h_length = 8;
 
@@ -188,8 +218,8 @@ void Game::print_board(std::vector<std::vector<char>>& board) {
     for (int i = 0; i < 8; i++) {
         std::cout << 8 - i << "  |";
         for (int j = 0; j < 8; j++) {
-            std::string piece = get_piece_icon(board[i][j]);
-            if (piece == ".") {
+            std::string piece_str = get_piece_icon(board[i][j]);
+            if (piece_str == ".") {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
                     std::cout << " \u25A0 ";
                 } else {
@@ -197,7 +227,7 @@ void Game::print_board(std::vector<std::vector<char>>& board) {
                 }
                 std::cout << "\uFFE8";
             } else {
-                std::cout << " " << piece << " \uFFE8";
+                std::cout << " " << piece_str << " \uFFE8";
             }
         }
         std::cout << std::endl;
@@ -214,49 +244,48 @@ void Game::print_board(std::vector<std::vector<char>>& board) {
     std::cout << std::endl;
 }
 
-std::string Game::get_piece_icon(char algebraic_piece) {
+std::string Game::get_piece_icon(Piece algebraic_piece) {
     std::string piece_icon;
     switch (algebraic_piece) {
-    case '.':
+    case Piece::Empty:
         piece_icon = ".";
         break;
-    case 'K':
+    case Piece::WhiteKing:
         piece_icon = "\u2654";
         break;
-    case 'Q':
+    case Piece::WhiteQueen:
         piece_icon = "\u2655";
         break;
-    case 'R':
+    case Piece::WhiteRook:
         piece_icon = "\u2656";
         break;
-    case 'B':
+    case Piece::WhiteBishop:
         piece_icon = "\u2657";
         break;
-    case 'N':
+    case Piece::WhiteKnight:
         piece_icon = "\u2658";
         break;
-    case 'P':
+    case Piece::WhitePawn:
         piece_icon = "\u2659";
         break;
-    case 'k':
+    case Piece::BlackKing:
         piece_icon = "\u265A";
         break;
-    case 'q':
+    case Piece::BlackQueen:
         piece_icon = "\u265B";
         break;
-    case 'r':
+    case Piece::BlackRook:
         piece_icon = "\u265C";
         break;
-    case 'b':
+    case Piece::BlackBishop:
         piece_icon = "\u265D";
         break;
-    case 'n':
+    case Piece::BlackKnight:
         piece_icon = "\u265E";
         break;
-    case 'p':
+    case Piece::BlackPawn:
         piece_icon = "\u265F";
         break;
-    
     default:
         break;
     }

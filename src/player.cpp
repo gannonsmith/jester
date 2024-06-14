@@ -1,35 +1,60 @@
 #include <iostream>
 #include "player.h"
 
-char Player::get(int rank, int file) {
-    int shift_num = ((rank - 8) * 8) + file + 1;
+Piece Player::get(Square& square) {
+    return Piece::Empty;
+}
+
+Piece White::get(Square& square) {
+    int shift_num = ((square.rank - 8) * 8) + square.file + 1;
     unsigned long long int bit = 1;
     unsigned long long int mask_bit = bit << shift_num;
 
-    char piece;
     if ((king_board.bitboard & mask_bit) != 0) {
-        piece = 'K';
+        return Piece::WhiteKing;
     } else if ((queen_board.bitboard & mask_bit) != 0) {
-        piece = 'Q';
+        return Piece::WhiteQueen;
     } else if ((rook_board.bitboard & mask_bit) != 0) {
-        piece = 'R';
+        return Piece::WhiteRook;
     } else if ((bishop_board.bitboard & mask_bit) != 0) {
-        piece = 'B';
+        return Piece::WhiteBishop;
     } else if ((knight_board.bitboard & mask_bit) != 0) {
-        piece = 'N';
+        return Piece::WhiteKnight;
     } else if ((pawn_board.bitboard & mask_bit) != 0) {
-        piece = 'P';
+        return Piece::WhitePawn;
     } else {
-       piece = '.';
+        return Piece::Empty;
     }
-    return piece;
 }
 
-std::vector<std::vector<char>> Player::get_board() {
-    std::vector<std::vector<char>> board(8, std::vector<char>(8));
+Piece Black::get(Square& square) {
+    int shift_num = ((square.rank - 8) * 8) + square.file + 1;
+    unsigned long long int bit = 1;
+    unsigned long long int mask_bit = bit << shift_num;
+
+    if ((king_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackKing;
+    } else if ((queen_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackQueen;
+    } else if ((rook_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackRook;
+    } else if ((bishop_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackBishop;
+    } else if ((knight_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackKnight;
+    } else if ((pawn_board.bitboard & mask_bit) != 0) {
+        return Piece::BlackPawn;
+    } else {
+        return Piece::Empty;
+    }
+}
+
+std::vector<std::vector<Piece>> Player::get_board() {
+    std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
-            board[rank][file] = get(rank, file);
+            Square square {rank, file};
+            board[rank][file] = get(square);
         }
     }
     return board;

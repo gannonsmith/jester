@@ -1,3 +1,7 @@
+struct Square {
+    int rank;
+    int file;
+};
 
 class Board {
     public:
