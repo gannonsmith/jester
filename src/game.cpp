@@ -50,6 +50,16 @@ void Game::run() {
     }
 }
 
+bool Game::move(std::string& move) {
+    if (move.size() != 6) {
+        std::cout << "move string is incorrect length" << std::endl;
+        return false;
+    }
+
+    
+
+}
+
 void Game::fen_setup(std::string& fen_string) {
     int rank = 0;
     int file = 0;
