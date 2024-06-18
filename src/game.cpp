@@ -132,6 +132,9 @@ void Game::get_moves() {
     unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
     unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
     unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
+
+    unsigned long long knight_left = white.knight_board.bitboard << 15;
+    unsigned long long knight_right = white.knight_board.bitboard << 17;
 }
 
 void Game::fen_setup(std::string& fen_string) {
