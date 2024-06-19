@@ -135,6 +135,8 @@ void Game::get_moves() {
 
     unsigned long long knight_left = white.knight_board.bitboard << 15;
     unsigned long long knight_right = white.knight_board.bitboard << 17;
+    unsigned long long knight_left_again = white.knight_board.bitboard << 6;
+    unsigned long long knight_right_again = white.knight_board.bitboard << 10;
 }
 
 void Game::fen_setup(std::string& fen_string) {
