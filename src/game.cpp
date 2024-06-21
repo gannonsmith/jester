@@ -133,10 +133,14 @@ void Game::get_moves() {
     unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
     unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
 
-    unsigned long long knight_left = white.knight_board.bitboard << 15;
-    unsigned long long knight_right = white.knight_board.bitboard << 17;
-    unsigned long long knight_left_again = white.knight_board.bitboard << 6;
-    unsigned long long knight_right_again = white.knight_board.bitboard << 10;
+    unsigned long long knight_up_left = white.knight_board.bitboard << 15;
+    unsigned long long knight_up_right = white.knight_board.bitboard << 17;
+    unsigned long long knight_left_up = white.knight_board.bitboard << 6;
+    unsigned long long knight_right_up = white.knight_board.bitboard << 10;
+    unsigned long long knight_down_left = white.knight_board.bitboard >> 15;
+    unsigned long long knight_down_right = white.knight_board.bitboard >> 17;
+    unsigned long long knight_left_down = white.knight_board.bitboard >> 6;
+    unsigned long long knight_right_down = white.knight_board.bitboard >> 10;
 }
 
 void Game::fen_setup(std::string& fen_string) {
