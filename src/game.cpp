@@ -26,7 +26,7 @@ void Game::run() {
         valid_move = false;
         while (!valid_move) {
             std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            refresh_board();
+            //refresh_board();
             print_board();
 
             std::cin >> move;
@@ -40,7 +40,7 @@ void Game::run() {
         valid_move = false;
         while (!valid_move) {
             std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            refresh_board();
+            //refresh_board();
             print_board();
 
             std::cin >> move;
@@ -77,20 +77,19 @@ bool Game::move(std::string& move_str, bool white_to_move) {
 
     Square start_square {int(move_str[2]), int(move_str[1])};
     
-    if ((white_to_move && move_str[0] != white.get(start_square)) ||
-        (!white_to_move && move_str[0] != black.get(start_square)))
+    if (true)
     {
         std::cout << "piece doesn't match starting square" << std::endl;
         return false;
     }
-
+    /*
     Move move {
         {int(move_str[2]), int(move_str[1])},
         {int(move_str[5]), int(move_str[4])},
         {1},
         {Piece(move_str[0])},
         move_str[3] == 'x'
-    };
+    };*/
 
     if (true) {
         std::cout << "cannot move there" << std::endl;
@@ -126,7 +125,7 @@ bool Game::valid_square(char rank, char file) {
 }
 
 void Game::get_moves() {
-    refresh_board();
+    //refresh_board();
     // white pawns
     unsigned long long one_forward = white.pawn_board.bitboard << 8;
     unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;

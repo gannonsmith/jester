@@ -1,6 +1,15 @@
 #include <set>
 #include "player.h"
+#include "helper.h"
 #include "piece.h"
+
+struct Move {
+    Square start;
+    Square end;
+    int depth;
+    Piece piece;
+    bool capture;
+};
 
 class Game {
     public:
@@ -14,8 +23,8 @@ class Game {
     void fen_setup(std::string& fen_string);
 
     private:
-    White white;
-    Black black;
+    WhitePlayer white;
+    BlackPlayer black;
     Piece board[64];
     std::set<Move> valid_moves;
 

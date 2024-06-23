@@ -1,5 +1,6 @@
 #include <vector>
 #include "bitboard.h"
+#include "helper.h"
 #include "piece.h"
 
 
@@ -17,14 +18,14 @@ class Player {
     BitBoard pawn_board;
 };
 
-class White : public Player {
+class WhitePlayer : public Player {
     public:
     Piece get(Square& square);
 
     private:
 };
 
-class Black : public Player {
+class BlackPlayer : public Player {
     public:
     Piece get(Square& square);
 

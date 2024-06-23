@@ -4,7 +4,7 @@
 int main(int argc, char** argv) {
     Game g = Game();
     
-    g.run();
+    //g.run();
 
     return 0;
 }
