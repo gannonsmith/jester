@@ -11,6 +11,8 @@ Game::Game() {
     std::cout << "Initial Setup:" << std::endl;
     print_board();
 
+    print_bitboards();
+
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
 
@@ -143,12 +145,12 @@ void Game::get_moves() {
 }
 
 void Game::fen_setup(std::string& fen_string) {
-    int rank = 0;
-    int file = 0;
+    int rank = 1;
+    int file = 1;
     for (char c: fen_string) {
         if (c == '/') {
             rank++;
-            file = 0;
+            file = 1;
             continue;
         }
         if ('0' <= c && c <= '9') {
@@ -176,7 +178,7 @@ void Game::print_board() {
     for (int i = 0; i < 8; i++) {
         std::cout << 8 - i << "  |";
         for (int j = 0; j < 8; j++) {
-            std::string piece_str = board[(i-1)*8 + j-1].get_display();
+            std::string piece_str = board[(i)*8 + j].get_display();
             if (piece_str == ".") {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
                     std::cout << " \u25A0 ";
@@ -205,4 +207,57 @@ void Game::print_board() {
 
 void Game::set_square(Piece piece, Square& square) {
     board[(square.rank-1)*8 + square.file-1] = piece;
+
+    Player* p;
+    if (piece.white()) {
+        p = &white;
+    } else if (piece.black()) {
+        p = &black;
+    } else {
+        std::cout << "something is wrong" << std::endl;
+        return;
+    }
+
+    if (piece.king()) {
+        p->king_board.set(square);
+    } else if (piece.queen()) {
+        p->queen_board.set(square);
+    } else if (piece.rook()) {
+        p->rook_board.set(square);
+    } else if (piece.bishop()) {
+        p->bishop_board.set(square);
+    } else if (piece.knight()) {
+        p->knight_board.set(square);
+    } else if (piece.pawn()) {
+        p->pawn_board.set(square);
+    } else {
+        std::cout << "something is wrong" << std::endl;
+        return;
+    }
+}
+
+
+void Game::print_bitboards() {
+    unsigned long long int bitboard = 0;
+    bitboard |= white.king_board.bitboard | 
+    white.queen_board.bitboard |
+    white.rook_board.bitboard |
+    white.bishop_board.bitboard |
+    white.knight_board.bitboard |
+    white.pawn_board.bitboard |
+    black.king_board.bitboard |
+    black.queen_board.bitboard |
+    black.rook_board.bitboard |
+    black.bishop_board.bitboard |
+    black.knight_board.bitboard |
+    black.pawn_board.bitboard;
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+            unsigned long long int tmp = bitboard >> ((rank*8) + file);
+            unsigned long long int one = 1;
+            auto t = tmp & one;
+            std::cout << t;
+        }
+        std::cout << std::endl;
+    }
 }

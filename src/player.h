@@ -8,7 +8,7 @@ class Player {
     public:
 
     std::vector<std::vector<Piece>> get_board();
-    virtual Piece get(Square& square);
+    Piece get(Square& square);
 
     BitBoard king_board;
     BitBoard queen_board;
@@ -18,17 +18,3 @@ class Player {
     BitBoard pawn_board;
 };
 
-class WhitePlayer : public Player {
-    public:
-    Piece get(Square& square);
-
-    private:
-};
-
-class BlackPlayer : public Player {
-    public:
-    Piece get(Square& square);
-
-
-    private:
-};
