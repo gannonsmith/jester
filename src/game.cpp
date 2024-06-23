@@ -11,7 +11,7 @@ Game::Game() {
     std::cout << "Initial Setup:" << std::endl;
     print_board();
 
-    print_bitboards();
+    //print_bitboards();
 
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
@@ -25,105 +25,122 @@ void Game::run() {
 
     int count = 0;
     while (count == 0) {
-        valid_move = false;
-        while (!valid_move) {
-            std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            //refresh_board();
-            print_board();
-
-            std::cin >> move;
-            if (move == "q") {
-                return;
-            }
-            valid_move = this->move(move, true);
+        
+        Move white_move;
+        bool end = get_move(white_move, true);
+        if (end) {
+            std::cout << "Ending game" << std::endl;
+            return;
         }
-        std::cout << "White does move: " << move << std::endl;
 
-        valid_move = false;
-        while (!valid_move) {
-            std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
-            //refresh_board();
-            print_board();
-
-            std::cin >> move;
-            if (move == "q") {
-                return;
-            }
-            valid_move = this->move(move, false);
+        Move black_move;
+        end = get_move(black_move, false);
+        if (end) {
+            std::cout << "Ending game" << std::endl;
+            return;
         }
-        std::cout << "Black does move: " << move << std::endl;
 
         count++;
     }
 }
 
-bool Game::move(std::string& move_str, bool white_to_move) {
+bool Game::get_move(Move& move, bool white_to_move) {
+    std::string move_str;
+
+    bool valid_move = false;
+    while (!valid_move) {
+        if (white_to_move) {
+            std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
+        } else {
+            std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
+        }
+        print_board();
+
+        std::cin >> move_str;
+        if (move_str == "q") {
+            return false;
+        }
+        valid_move = str_to_move(move, move_str, white_to_move);
+    }
+
+    if (white_to_move) {
+        std::cout << "White does move: " << move_str << std::endl;
+    } else {
+        std::cout << "Black does move: " << move_str << std::endl;
+    }
+
+    return true;
+}
+
+
+bool Game::str_to_move(Move& move, std::string& move_str, bool white_to_move) {
     if (move_str.size() != 6) {
         std::cout << "move string is invalid length" << std::endl;
         return false;
     }
-    if (!valid_piece(move_str[0], white_to_move)) {
+
+    Piece piece;
+    if (!valid_piece(piece, move_str[0], white_to_move)) {
         std::cout << "piece character is invalid" << std::endl;
         return false;
     }
-    if (!valid_square(move_str[2], move_str[1]) ||
-        !valid_square(move_str[5], move_str[4])) 
+
+    Square start_square;
+    Square end_square;
+    if (!valid_square(start_square, move_str[2], move_str[1]) ||
+        !valid_square(end_square, move_str[5], move_str[4])) 
     {
         std::cout << "invalid square" << std::endl;
         return false;
     }
+
+    bool capture;
     if (move_str[3] != '-' && move_str[3] != 'x') {
         std::cout << "capture not specified" << std::endl;
         return false;
     }
+    capture = move_str[3] == 'x';
 
-    Square start_square {int(move_str[2]), int(move_str[1])};
-    
-    if (true)
-    {
-        std::cout << "piece doesn't match starting square" << std::endl;
-        return false;
-    }
-    /*
-    Move move {
-        {int(move_str[2]), int(move_str[1])},
-        {int(move_str[5]), int(move_str[4])},
-        {1},
-        {Piece(move_str[0])},
-        move_str[3] == 'x'
-    };*/
+    move.start = start_square;
+    move.end = end_square;
+    move.depth = 1;
+    move.piece = piece;
+    move.capture = capture;
 
-    if (true) {
+    if (false) {
         std::cout << "cannot move there" << std::endl;
         return false;
     }
 
-    //make move
     return true;
 }
 
-bool Game::valid_piece(char piece, bool white) {
+
+bool Game::valid_piece(Piece& piece, char piece_c, bool white) {
     if (white && 
-        (piece == 'K' || piece == 'Q' || piece == 'R' || piece == 'B' || 
-        piece == 'N' || piece == 'P')) 
+        (piece_c == 'K' || piece_c == 'Q' || piece_c == 'R' || piece_c == 'B' || 
+        piece_c == 'N' || piece_c == 'P')) 
     {
+        piece = Piece::get(piece_c);
         return true;
     } else if (!white && 
-        (piece == 'k' || piece == 'q' || piece == 'r' || piece == 'b' || 
-        piece == 'n' || piece == 'p'))
+        (piece_c == 'k' || piece_c == 'q' || piece_c == 'r' || piece_c == 'b' || 
+        piece_c == 'n' || piece_c == 'p'))
     {
+        piece = Piece::get(piece_c);
         return true;
     } else {
         return false;
     }
 }
 
-bool Game::valid_square(char rank, char file) {
+bool Game::valid_square(Square& square, char rank, char file) {
     if (rank < '1' || rank > '8' || file < 'a' || 'h' < file) {
         return false;
-    } else {
-        return true;
     }
+    square.rank = rank - '1' + 1;
+    square.file = file - 'a' + 1;
+    return true;
 }
 
 void Game::get_moves() {

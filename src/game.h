@@ -33,10 +33,11 @@ class Game {
     std::set<Move> valid_moves;
 
     void get_moves();
+    bool get_move(Move& move, bool white_to_move);
 
-    bool move(std::string& move_str, bool white_to_move);
-    bool valid_piece(char piece, bool white);
-    bool valid_square(char rank, char file);
+    bool str_to_move(Move& move, std::string& move_str, bool white_to_move);
+    bool valid_piece(Piece& piece, char piece_c, bool white);
+    bool valid_square(Square& square, char rank, char file);
 
     void print_bitboards();
 };
