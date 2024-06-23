@@ -1,21 +1,6 @@
 #include <vector>
-#include "board.h"
-
-enum Piece {
-    WhiteKing = 'K',
-    WhiteQueen = 'Q',
-    WhiteRook = 'R',
-    WhiteBishop = 'B',
-    WhiteKnight = 'N',
-    WhitePawn = 'P',
-    BlackKing = 'k',
-    BlackQueen = 'q',
-    BlackRook = 'r',
-    BlackBishop = 'b',
-    BlackKnight = 'n',
-    BlackPawn = 'p',
-    Empty = '.'
-};
+#include "bitboard.h"
+#include "piece.h"
 
 
 class Player {
@@ -24,12 +9,12 @@ class Player {
     std::vector<std::vector<Piece>> get_board();
     virtual Piece get(Square& square);
 
-    KingBoard king_board;
-    QueenBoard queen_board;
-    RookBoard rook_board;
-    BishopBoard bishop_board;
-    KnightBoard knight_board;
-    PawnBoard pawn_board;
+    BitBoard king_board;
+    BitBoard queen_board;
+    BitBoard rook_board;
+    BitBoard bishop_board;
+    BitBoard knight_board;
+    BitBoard pawn_board;
 };
 
 class White : public Player {

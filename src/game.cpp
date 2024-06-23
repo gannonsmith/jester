@@ -1,14 +1,14 @@
 #include <iostream>
 #include "game.h"
 
-Game::Game(): display_board{8, std::vector<Piece>(8)} {
+Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     //std::cin >> fen;
     fen_setup(fen);
+
     std::cout << "Initial Setup:" << std::endl;
-    refresh_board();
     print_board();
 
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
@@ -156,68 +156,14 @@ void Game::fen_setup(std::string& fen_string) {
             file += c - '0';
             continue;
         }
-
-        switch (c) {
-        case 'K':
-            white.king_board.set(rank, file);
-            break;
-        case 'Q':
-            white.queen_board.set(rank, file);
-            break;
-        case 'R':
-            white.rook_board.set(rank, file);
-            break;
-        case 'B':
-            white.bishop_board.set(rank, file);
-            break;
-        case 'N':
-            white.knight_board.set(rank, file);
-            break;
-        case 'P':
-            white.pawn_board.set(rank, file);
-            break;
-        case 'k':
-            black.king_board.set(rank, file);
-            break;
-        case 'q':
-            black.queen_board.set(rank, file);
-            break;
-        case 'r':
-            black.rook_board.set(rank, file);
-            break;
-        case 'b':
-            black.bishop_board.set(rank, file);
-            break;
-        case 'n':
-            black.knight_board.set(rank, file);
-            break;
-        case 'p':
-            black.pawn_board.set(rank, file);
-            break;
-        default:
-            std::cout << "fen string probably invalid" << std::endl;
-            break;
-        }
+        Piece piece = Piece::get(c);
+        Square square{rank, file};
+        set_square(piece, square);
+        
         file++;
     }
 }
 
-void Game::refresh_board() {
-    std::vector<std::vector<Piece>> white_board = white.get_board();
-    std::vector<std::vector<Piece>> black_board = black.get_board();
-
-    for (int rank = 0; rank < 8; rank++) {
-        for (int file = 0; file < 8; file++) {
-            if (white_board[rank][file] != '.') {
-                display_board[rank][file] = white_board[rank][file];
-            } else if (black_board[rank][file] != '.') {
-                display_board[rank][file] = black_board[rank][file];
-            } else {
-                display_board[rank][file] = Piece::Empty;
-            }
-        }
-    }
-}
 
 void Game::print_board() {
     std::cout << std::endl;
@@ -231,7 +177,7 @@ void Game::print_board() {
     for (int i = 0; i < 8; i++) {
         std::cout << 8 - i << "  |";
         for (int j = 0; j < 8; j++) {
-            std::string piece_str = get_piece_icon(display_board[i][j]);
+            std::string piece_str = board[(i-1)*8 + j-1].get_display();
             if (piece_str == ".") {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
                     std::cout << " \u25A0 ";
@@ -257,50 +203,7 @@ void Game::print_board() {
     std::cout << std::endl;
 }
 
-std::string Game::get_piece_icon(Piece algebraic_piece) {
-    std::string piece_icon;
-    switch (algebraic_piece) {
-    case Piece::Empty:
-        piece_icon = ".";
-        break;
-    case Piece::WhiteKing:
-        piece_icon = "\u2654";
-        break;
-    case Piece::WhiteQueen:
-        piece_icon = "\u2655";
-        break;
-    case Piece::WhiteRook:
-        piece_icon = "\u2656";
-        break;
-    case Piece::WhiteBishop:
-        piece_icon = "\u2657";
-        break;
-    case Piece::WhiteKnight:
-        piece_icon = "\u2658";
-        break;
-    case Piece::WhitePawn:
-        piece_icon = "\u2659";
-        break;
-    case Piece::BlackKing:
-        piece_icon = "\u265A";
-        break;
-    case Piece::BlackQueen:
-        piece_icon = "\u265B";
-        break;
-    case Piece::BlackRook:
-        piece_icon = "\u265C";
-        break;
-    case Piece::BlackBishop:
-        piece_icon = "\u265D";
-        break;
-    case Piece::BlackKnight:
-        piece_icon = "\u265E";
-        break;
-    case Piece::BlackPawn:
-        piece_icon = "\u265F";
-        break;
-    default:
-        break;
-    }
-    return piece_icon;
+
+void Game::set_square(Piece piece, Square& square) {
+    board[(square.rank-1)*8 + square.file-1] = piece;
 }

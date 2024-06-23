@@ -1,10 +1,10 @@
-#include "board.h"
+#include "bitboard.h"
 
-unsigned long long int Board::get() {
+unsigned long long int BitBoard::get() {
     return bitboard;
 }
 
-void Board::set(int rank, int file) { 
+void BitBoard::set(int rank, int file) { 
     // 0 <= rank < 8
     // 0 <= file < 8
     int shift_num = ((rank - 8) * 8) + file + 1;

@@ -1,5 +1,6 @@
 #include <set>
 #include "player.h"
+#include "piece.h"
 
 class Game {
     public:
@@ -7,15 +8,15 @@ class Game {
     Game();
     void run();
 
-    void refresh_board();
     void print_board();
+    void set_square(Piece piece, Square& square);
 
     void fen_setup(std::string& fen_string);
 
     private:
     White white;
     Black black;
-    std::vector<std::vector<Piece>> display_board;
+    Piece board[64];
     std::set<Move> valid_moves;
 
     bool move(std::string& move_str, bool white_to_move);
@@ -24,5 +25,6 @@ class Game {
 
     void get_moves();
 
-    std::string get_piece_icon(Piece algebraic_piece);
+    // Piece helpers
+
 };
