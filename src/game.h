@@ -32,12 +32,13 @@ class Game {
     Piece board[64];
     std::set<Move> valid_moves;
 
-    void get_moves();
+    void get_moves(bool white_to_move);
     bool get_move(Move& move, bool white_to_move);
 
     bool str_to_move(Move& move, std::string& move_str, bool white_to_move);
     bool valid_piece(Piece& piece, char piece_c, bool white);
     bool valid_square(Square& square, char rank, char file);
 
+    unsigned long long get_bitboard();
     void print_bitboards();
 };

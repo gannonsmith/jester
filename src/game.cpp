@@ -107,6 +107,7 @@ bool Game::str_to_move(Move& move, std::string& move_str, bool white_to_move) {
     move.piece = piece;
     move.capture = capture;
 
+    // TODO
     if (false) {
         std::cout << "cannot move there" << std::endl;
         return false;
@@ -143,14 +144,31 @@ bool Game::valid_square(Square& square, char rank, char file) {
     return true;
 }
 
-void Game::get_moves() {
-    //refresh_board();
+void Game::get_moves(bool white_to_move) {
+    unsigned long long zeros = 0;
+    unsigned long long ones = ~zeros;
+
+    unsigned long long occupied_space = get_bitboard();
+    unsigned long long open_space = occupied_space ^ ones;
+
+    if (white_to_move) {
+
+
+
+
+    } else {
+
+
+
+    }
+    
     // white pawns
     unsigned long long one_forward = white.pawn_board.bitboard << 8;
     unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
     unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
     unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
 
+    // white knights
     unsigned long long knight_up_left = white.knight_board.bitboard << 15;
     unsigned long long knight_up_right = white.knight_board.bitboard << 17;
     unsigned long long knight_left_up = white.knight_board.bitboard << 6;
@@ -254,8 +272,8 @@ void Game::set_square(Piece piece, Square& square) {
 }
 
 
-void Game::print_bitboards() {
-    unsigned long long int bitboard = 0;
+unsigned long long Game::get_bitboard() {
+    unsigned long long bitboard = 0;
     bitboard |= white.king_board.bitboard | 
     white.queen_board.bitboard |
     white.rook_board.bitboard |
@@ -268,6 +286,14 @@ void Game::print_bitboards() {
     black.bishop_board.bitboard |
     black.knight_board.bitboard |
     black.pawn_board.bitboard;
+
+    return bitboard;
+}
+
+
+void Game::print_bitboards() {
+    unsigned long long int bitboard = get_bitboard();
+    
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             unsigned long long int tmp = bitboard >> ((rank*8) + file);
