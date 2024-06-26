@@ -11,7 +11,7 @@ Game::Game() {
     std::cout << "Initial Setup:" << std::endl;
     print_board();
 
-    //print_bitboards();
+    print_bitboards();
 
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
