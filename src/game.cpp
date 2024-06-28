@@ -152,9 +152,21 @@ void Game::get_moves(bool white_to_move) {
     unsigned long long open_space = occupied_space ^ ones;
 
     if (white_to_move) {
+        // white pawns
+        unsigned long long one_forward = white.pawn_board.bitboard << 8;
+        unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
+        unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
+        unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
 
-
-
+        // white knights
+        unsigned long long knight_up_left = white.knight_board.bitboard << 15;
+        unsigned long long knight_up_right = white.knight_board.bitboard << 17;
+        unsigned long long knight_left_up = white.knight_board.bitboard << 6;
+        unsigned long long knight_right_up = white.knight_board.bitboard << 10;
+        unsigned long long knight_down_left = white.knight_board.bitboard >> 15;
+        unsigned long long knight_down_right = white.knight_board.bitboard >> 17;
+        unsigned long long knight_left_down = white.knight_board.bitboard >> 6;
+        unsigned long long knight_right_down = white.knight_board.bitboard >> 10;
 
     } else {
 
@@ -162,21 +174,6 @@ void Game::get_moves(bool white_to_move) {
 
     }
     
-    // white pawns
-    unsigned long long one_forward = white.pawn_board.bitboard << 8;
-    unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
-    unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
-    unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
-
-    // white knights
-    unsigned long long knight_up_left = white.knight_board.bitboard << 15;
-    unsigned long long knight_up_right = white.knight_board.bitboard << 17;
-    unsigned long long knight_left_up = white.knight_board.bitboard << 6;
-    unsigned long long knight_right_up = white.knight_board.bitboard << 10;
-    unsigned long long knight_down_left = white.knight_board.bitboard >> 15;
-    unsigned long long knight_down_right = white.knight_board.bitboard >> 17;
-    unsigned long long knight_left_down = white.knight_board.bitboard >> 6;
-    unsigned long long knight_right_down = white.knight_board.bitboard >> 10;
 }
 
 void Game::fen_setup(std::string& fen_string) {
