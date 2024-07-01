@@ -145,11 +145,8 @@ bool Game::valid_square(Square& square, char rank, char file) {
 }
 
 void Game::get_moves(bool white_to_move) {
-    unsigned long long zeros = 0;
-    unsigned long long ones = ~zeros;
-
     unsigned long long occupied_space = get_bitboard();
-    unsigned long long open_space = occupied_space ^ ones;
+    unsigned long long open_space = ~occupied_space;
 
     if (white_to_move) {
         // white pawns
@@ -169,11 +166,20 @@ void Game::get_moves(bool white_to_move) {
         unsigned long long knight_right_down = white.knight_board.bitboard >> 10;
 
     } else {
-
-
-
     }
     
+}
+
+void Game::get_pawn_moves(bool white_move, int index) {
+    if (white_move) {
+        unsigned long long one_forward = white.pawn_board.bitboard << 8;
+        unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
+        unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
+        unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
+
+    } else {
+
+    }
 }
 
 void Game::fen_setup(std::string& fen_string) {
@@ -270,14 +276,26 @@ void Game::set_square(Piece piece, Square& square) {
 
 
 unsigned long long Game::get_bitboard() {
+    unsigned long long bitboard = get_white_bitboard() | get_black_bitboard();
+    return bitboard;
+}
+
+
+unsigned long long Game::get_white_bitboard() {
     unsigned long long bitboard = 0;
     bitboard |= white.king_board.bitboard | 
     white.queen_board.bitboard |
     white.rook_board.bitboard |
     white.bishop_board.bitboard |
     white.knight_board.bitboard |
-    white.pawn_board.bitboard |
-    black.king_board.bitboard |
+    white.pawn_board.bitboard;
+
+    return bitboard;
+}
+
+unsigned long long Game::get_black_bitboard() {
+    unsigned long long bitboard = 0;
+    bitboard |= black.king_board.bitboard |
     black.queen_board.bitboard |
     black.rook_board.bitboard |
     black.bishop_board.bitboard |
