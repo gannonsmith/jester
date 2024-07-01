@@ -4,6 +4,8 @@
 
 class Piece {
 
+    public:
+
     enum PieceEncoding {
         King = 0b00100000,
         Queen = 0b00010000,
@@ -28,10 +30,14 @@ class Piece {
         Empty = 0b00000000
     };
 
-    public:
+    friend std::ostream& operator<<(std::ostream& os, Piece const & p) {
+        std::string s = p.get_display();
+        return os << s;
+    };
 
     static Piece get(char c);
-    std::string get_display();
+    void set(PieceEncoding p);
+    std::string get_display() const;
 
     bool empty();
 

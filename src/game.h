@@ -1,4 +1,4 @@
-#include <set>
+#include <iostream>
 #include "player.h"
 #include "helper.h"
 #include "piece.h"
@@ -9,6 +9,10 @@ struct Move {
     int depth;
     Piece piece;
     bool capture;
+
+    friend std::ostream& operator<<(std::ostream& os, Move const & m) {
+        return os << m.piece << ": " << m.start << " -> " << m.end << std::endl;
+    };
 };
 
 class Game {
@@ -30,12 +34,13 @@ class Game {
     Player white;
     Player black;
     Piece board[64];
-    std::set<Move> valid_moves;
+    std::vector<Move> valid_moves;
+    int max_depth;
 
-    void get_moves(bool white_to_move);
+    void get_moves(bool white_to_move, int depth);
     bool get_move(Move& move, bool white_to_move);
 
-    void get_pawn_moves(bool white_move, int index);
+    void get_pawn_moves(bool white_move, int depth);
 
     bool str_to_move(Move& move, std::string& move_str, bool white_to_move);
     bool valid_piece(Piece& piece, char piece_c, bool white);

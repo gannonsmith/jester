@@ -1,5 +1,9 @@
 #include "piece.h"
 
+void Piece::set(PieceEncoding p) {
+    piece_encoding = p;
+}
+
 Piece Piece::get(char c) {
     Piece piece;
     switch (c) {
@@ -46,7 +50,7 @@ Piece Piece::get(char c) {
     return piece;
 }
 
-std::string Piece::get_display() {
+std::string Piece::get_display() const {
     std::string piece_icon;
     switch (piece_encoding) {
     case PieceEncoding::Empty:

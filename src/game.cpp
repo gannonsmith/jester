@@ -3,6 +3,8 @@
 
 Game::Game() {
 
+    max_depth = 5;
+
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     //std::cin >> fen;
@@ -17,6 +19,11 @@ Game::Game() {
 }
 
 void Game::run() {
+    // TESTING STUFF
+
+
+
+
     std::cout << "game running" << std::endl;
 
     std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
@@ -144,41 +151,111 @@ bool Game::valid_square(Square& square, char rank, char file) {
     return true;
 }
 
-void Game::get_moves(bool white_to_move) {
-    unsigned long long occupied_space = get_bitboard();
-    unsigned long long open_space = ~occupied_space;
-
-    if (white_to_move) {
-        // white pawns
-        unsigned long long one_forward = white.pawn_board.bitboard << 8;
-        unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
-        unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
-        unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
-
-        // white knights
-        unsigned long long knight_up_left = white.knight_board.bitboard << 15;
-        unsigned long long knight_up_right = white.knight_board.bitboard << 17;
-        unsigned long long knight_left_up = white.knight_board.bitboard << 6;
-        unsigned long long knight_right_up = white.knight_board.bitboard << 10;
-        unsigned long long knight_down_left = white.knight_board.bitboard >> 15;
-        unsigned long long knight_down_right = white.knight_board.bitboard >> 17;
-        unsigned long long knight_left_down = white.knight_board.bitboard >> 6;
-        unsigned long long knight_right_down = white.knight_board.bitboard >> 10;
-
-    } else {
-    }
+void Game::get_moves(bool white_to_move, int depth) {
+    return;
     
 }
 
-void Game::get_pawn_moves(bool white_move, int index) {
+void Game::get_pawn_moves(bool white_move, int depth) {
+    const unsigned long long occupied_space = get_bitboard();
+    const unsigned long long open_space = ~occupied_space;
+
+    const unsigned long long white_board = get_white_bitboard();
+    const unsigned long long black_board = get_black_bitboard();
+
+    const unsigned long long third_rank = 16711680;
+    const unsigned long long sixth_rank = 280375465082880;
+
+    unsigned long long mask_bit;
+
     if (white_move) {
-        unsigned long long one_forward = white.pawn_board.bitboard << 8;
-        unsigned long long two_forward = (65280 & white.pawn_board.bitboard) << 16;
-        unsigned long long one_forward_left = white.pawn_board.bitboard << 7;
-        unsigned long long one_forward_right = white.pawn_board.bitboard << 9;
+        Piece white_pawn;
+        white_pawn.set(Piece::PieceEncoding::WhitePawn);
 
+        // WHITE PAWN MOVE: ONE FORWARD
+        unsigned long long jump_one = white.pawn_board.bitboard << 8;
+        jump_one &= open_space;
+        mask_bit = 1;
+        for (int rank = 1; rank <= 8; rank++) {
+            for (int file = 1; file <= 8; file++) {
+                if ((mask_bit & jump_one) != 0) {
+                    Move m{
+                        Square{rank, file},
+                        Square{rank-1, file},
+                        depth,
+                        white_pawn
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+        }
+
+        // WHITE PAWN MOVE: TWO FORWARD
+        unsigned long long jump_two = (third_rank & jump_one) << 8;
+        jump_two &= open_space;
+        mask_bit = 1;
+        for (int rank = 1; rank <= 8; rank++) {
+            for (int file = 1; file <= 8; file++) {
+                if ((mask_bit & jump_two) != 0) {
+                    Move m{
+                        Square{rank, file},
+                        Square{rank-2, file},
+                        depth,
+                        white_pawn
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+        }
+
+        unsigned long long take_front_left = white.pawn_board.bitboard << 7;
+        take_front_left &= black_board;
+
+        unsigned long long take_front_right = white.pawn_board.bitboard << 9;
+        take_front_right &= black_board;
     } else {
+        Piece black_pawn;
+        black_pawn.set(Piece::PieceEncoding::BlackPawn);
 
+        // BLACK PAWN MOVE: ONE FORWARD
+        unsigned long long jump_one = black.pawn_board.bitboard >> 8;
+        jump_one &= open_space;
+        mask_bit = 1;
+        for (int rank = 1; rank <= 8; rank++) {
+            for (int file = 1; file <= 8; file++) {
+                if ((mask_bit & jump_one) != 0) {
+                    Move m{
+                        Square{rank, file},
+                        Square{rank+1, file},
+                        depth,
+                        black_pawn
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+        }
+
+        // BLACK PAWN MOVE: TWO FORWARD
+        unsigned long long jump_two = (sixth_rank & jump_one) >> 8;
+        jump_two &= open_space;
+        mask_bit = 1;
+        for (int rank = 1; rank <= 8; rank++) {
+            for (int file = 1; file <= 8; file++) {
+                if ((mask_bit & jump_two) != 0) {
+                    Move m{
+                        Square{rank, file},
+                        Square{rank+2, file},
+                        depth,
+                        black_pawn
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+        }
     }
 }
 
