@@ -15,6 +15,22 @@ struct Move {
     };
 };
 
+class GameState {
+    int depth;
+    unsigned long long white_king;
+    unsigned long long white_queen;
+    unsigned long long white_rook;
+    unsigned long long white_bishop;
+    unsigned long long white_knight;
+    unsigned long long white_pawn;
+    unsigned long long black_king;
+    unsigned long long black_queen;
+    unsigned long long black_rook;
+    unsigned long long black_bishop;
+    unsigned long long black_knight;
+    unsigned long long black_pawn;
+};
+
 class Game {
     public:
 
