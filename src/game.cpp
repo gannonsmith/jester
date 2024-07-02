@@ -217,7 +217,7 @@ void Game::get_pawn_moves(bool white_move, int depth) {
         }
         return;
 
-        // WHITE PAWN MOVE: TAKE FORWARD LEFT
+        // WHITE PAWN MOVE: TAKE TOP LEFT
         unsigned long long take_left = white.pawn_board.bitboard << 9;
         take_left &= black_board;
         mask_bit = 65536;
@@ -238,7 +238,7 @@ void Game::get_pawn_moves(bool white_move, int depth) {
             }
         }
 
-        // WHITE PAWN MOVE: TAKE FORWARD RIGHT
+        // WHITE PAWN MOVE: TAKE TOP RIGHT
         unsigned long long take_right = white.pawn_board.bitboard << 7;
         take_right &= black_board;
         mask_bit = 65536;
@@ -246,7 +246,7 @@ void Game::get_pawn_moves(bool white_move, int depth) {
             for (int file = 2; file <= 8; file++) {
                 if ((mask_bit & take_left) != 0) {
                     Move m{
-                        Square{rank-1, file+1},
+                        Square{rank-1, file-1},
                         Square{rank, file},
                         depth,
                         white_pawn,
@@ -296,6 +296,48 @@ void Game::get_pawn_moves(bool white_move, int depth) {
                     false
                 };
                 valid_moves.push_back(m);
+            }
+            mask_bit <<= 1;
+        }
+
+        // BLACK PAWN MOVE: TAKE BOTTOM LEFT
+        unsigned long long take_left = black.pawn_board.bitboard >> 7;
+        take_left &= white_board;
+        mask_bit = 1;
+        for (int rank = 1; rank <= 6; rank++) {
+            mask_bit <<= 1;
+            for (int file = 1; file <= 7; file++) {
+                if ((mask_bit & take_left) != 0) {
+                    Move m{
+                        Square{rank+1, file+1},
+                        Square{rank, file},
+                        depth,
+                        black_pawn,
+                        true
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+        }
+
+        // BLACK PAWN MOVE: TAKE BOTTOM RIGHT
+        unsigned long long take_right = white.pawn_board.bitboard >> 9;
+        take_right &= white_board;
+        mask_bit = 65536;
+        for (int rank = 1; rank <= 6; rank++) {
+            for (int file = 2; file <= 8; file++) {
+                if ((mask_bit & take_left) != 0) {
+                    Move m{
+                        Square{rank+1, file-1},
+                        Square{rank, file},
+                        depth,
+                        black_pawn,
+                        true
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
             }
             mask_bit <<= 1;
         }
