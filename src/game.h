@@ -22,6 +22,7 @@ class Game {
     void run();
 
     void print_board();
+    void print_moves();
 
     /*
     rank, file 1-8

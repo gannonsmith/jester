@@ -7,6 +7,6 @@ struct Square {
     int file;
 
     friend std::ostream& operator<<(std::ostream& os, Square const & s) {
-        return os << "(" << s.rank << "," << s.file << ")";
+        return os << "(" << char(s.file + 'a' - 1) << s.rank << ")";
     };
 };

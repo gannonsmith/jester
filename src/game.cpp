@@ -20,9 +20,14 @@ Game::Game() {
 
 void Game::run() {
     // TESTING STUFF
-
-
-
+    Piece p;
+    p.set(Piece::PieceEncoding::WhitePawn);
+    std::cout << p << std::endl;
+    get_pawn_moves(true, 1);
+    get_pawn_moves(false, 1);
+    std::cout << "Total moves: " << valid_moves.size() << std::endl << std::endl;
+    print_moves();
+    return;
 
     std::cout << "game running" << std::endl;
 
@@ -174,14 +179,15 @@ void Game::get_pawn_moves(bool white_move, int depth) {
 
         // WHITE PAWN MOVE: ONE FORWARD
         unsigned long long jump_one = white.pawn_board.bitboard << 8;
+        std::cout << white.pawn_board.bitboard << std::endl;
         jump_one &= open_space;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 8; rank++) {
+        mask_bit = 65536;
+        for (int rank = 3; rank <= 8; rank++) {
             for (int file = 1; file <= 8; file++) {
                 if ((mask_bit & jump_one) != 0) {
                     Move m{
-                        Square{rank, file},
                         Square{rank-1, file},
+                        Square{rank, file},
                         depth,
                         white_pawn
                     };
@@ -194,13 +200,30 @@ void Game::get_pawn_moves(bool white_move, int depth) {
         // WHITE PAWN MOVE: TWO FORWARD
         unsigned long long jump_two = (third_rank & jump_one) << 8;
         jump_two &= open_space;
+        mask_bit = 16777216;
+        for (int file = 1; file <= 8; file++) {
+            if ((mask_bit & jump_two) != 0) {
+                Move m{
+                    Square{2, file},
+                    Square{4, file},
+                    depth,
+                    white_pawn
+                };
+                valid_moves.push_back(m);
+            }
+            mask_bit <<= 1;
+        }
+        return;
+
+        unsigned long long take_left = white.pawn_board.bitboard << 7;
+        take_left &= black_board;
         mask_bit = 1;
         for (int rank = 1; rank <= 8; rank++) {
             for (int file = 1; file <= 8; file++) {
                 if ((mask_bit & jump_two) != 0) {
                     Move m{
-                        Square{rank, file},
                         Square{rank-2, file},
+                        Square{rank, file},
                         depth,
                         white_pawn
                     };
@@ -210,11 +233,8 @@ void Game::get_pawn_moves(bool white_move, int depth) {
             }
         }
 
-        unsigned long long take_front_left = white.pawn_board.bitboard << 7;
-        take_front_left &= black_board;
-
-        unsigned long long take_front_right = white.pawn_board.bitboard << 9;
-        take_front_right &= black_board;
+        unsigned long long take_right = white.pawn_board.bitboard << 9;
+        take_right &= black_board;
     } else {
         Piece black_pawn;
         black_pawn.set(Piece::PieceEncoding::BlackPawn);
@@ -223,12 +243,12 @@ void Game::get_pawn_moves(bool white_move, int depth) {
         unsigned long long jump_one = black.pawn_board.bitboard >> 8;
         jump_one &= open_space;
         mask_bit = 1;
-        for (int rank = 1; rank <= 8; rank++) {
+        for (int rank = 1; rank <= 6; rank++) {
             for (int file = 1; file <= 8; file++) {
                 if ((mask_bit & jump_one) != 0) {
                     Move m{
-                        Square{rank, file},
                         Square{rank+1, file},
+                        Square{rank, file},
                         depth,
                         black_pawn
                     };
@@ -241,30 +261,34 @@ void Game::get_pawn_moves(bool white_move, int depth) {
         // BLACK PAWN MOVE: TWO FORWARD
         unsigned long long jump_two = (sixth_rank & jump_one) >> 8;
         jump_two &= open_space;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_two) != 0) {
-                    Move m{
-                        Square{rank, file},
-                        Square{rank+2, file},
-                        depth,
-                        black_pawn
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
+        mask_bit = 4294967296;
+        for (int file = 1; file <= 8; file++) {
+            if ((mask_bit & jump_two) != 0) {
+                Move m{
+                    Square{7, file},
+                    Square{5, file},
+                    depth,
+                    black_pawn
+                };
+                valid_moves.push_back(m);
             }
+            mask_bit <<= 1;
         }
     }
 }
 
+void Game::print_moves() {
+    for (auto move: valid_moves) {
+        std::cout << move << std::endl;
+    }
+}
+
 void Game::fen_setup(std::string& fen_string) {
-    int rank = 1;
+    int rank = 8;
     int file = 1;
     for (char c: fen_string) {
         if (c == '/') {
-            rank++;
+            rank--;
             file = 1;
             continue;
         }
@@ -290,9 +314,9 @@ void Game::print_board() {
         std::cout << " \u23AF\u23AF\u23AF";
     } 
     std::cout << std::endl;
-    for (int i = 0; i < 8; i++) {
-        std::cout << 8 - i << "  |";
-        for (int j = 0; j < 8; j++) {
+    for (int i = 7; i >= 0; i--) {
+        std::cout << i+1 << "  |";
+        for (int j = 7; j >= 0; j--) {
             std::string piece_str = board[(i)*8 + j].get_display();
             if (piece_str == ".") {
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
