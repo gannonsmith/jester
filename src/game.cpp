@@ -25,9 +25,10 @@ void Game::run() {
     std::cout << p << std::endl;
     get_pawn_moves(true, 1);
     get_pawn_moves(false, 1);
-    std::cout << "Total moves: " << valid_moves.size() << std::endl << std::endl;
+    std::cout << "Total moves: " << game_states.size() << std::endl << std::endl;
     print_moves();
     return;
+    // END TESTING STUFF
 
     std::cout << "game running" << std::endl;
 
@@ -161,189 +162,6 @@ void Game::get_moves(bool white_to_move, int depth) {
     
 }
 
-void Game::get_pawn_moves(bool white_move, int depth) {
-    const unsigned long long occupied_space = get_bitboard();
-    const unsigned long long open_space = ~occupied_space;
-
-    const unsigned long long white_board = get_white_bitboard();
-    const unsigned long long black_board = get_black_bitboard();
-
-    const unsigned long long third_rank = 16711680;
-    const unsigned long long sixth_rank = 280375465082880;
-
-    unsigned long long mask_bit;
-
-    if (white_move) {
-        Piece white_pawn;
-        white_pawn.set(Piece::PieceEncoding::WhitePawn);
-
-        // WHITE PAWN MOVE: ONE FORWARD
-        unsigned long long jump_one = white.pawn_board.bitboard << 8;
-        std::cout << white.pawn_board.bitboard << std::endl;
-        jump_one &= open_space;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_one) != 0) {
-                    Move m{
-                        Square{rank-1, file},
-                        Square{rank, file},
-                        depth,
-                        white_pawn,
-                        false
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // WHITE PAWN MOVE: TWO FORWARD
-        unsigned long long jump_two = (third_rank & jump_one) << 8;
-        jump_two &= open_space;
-        mask_bit = 16777216;
-        for (int file = 1; file <= 8; file++) {
-            if ((mask_bit & jump_two) != 0) {
-                Move m{
-                    Square{2, file},
-                    Square{4, file},
-                    depth,
-                    white_pawn,
-                    false
-                };
-                valid_moves.push_back(m);
-            }
-            mask_bit <<= 1;
-        }
-        return;
-
-        // WHITE PAWN MOVE: TAKE TOP LEFT
-        unsigned long long take_left = white.pawn_board.bitboard << 9;
-        take_left &= black_board;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            mask_bit <<= 1;
-            for (int file = 1; file <= 7; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank-1, file+1},
-                        Square{rank, file},
-                        depth,
-                        white_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // WHITE PAWN MOVE: TAKE TOP RIGHT
-        unsigned long long take_right = white.pawn_board.bitboard << 7;
-        take_right &= black_board;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            for (int file = 2; file <= 8; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank-1, file-1},
-                        Square{rank, file},
-                        depth,
-                        white_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-            mask_bit <<= 1;
-        }
-    } else {
-        Piece black_pawn;
-        black_pawn.set(Piece::PieceEncoding::BlackPawn);
-
-        // BLACK PAWN MOVE: ONE FORWARD
-        unsigned long long jump_one = black.pawn_board.bitboard >> 8;
-        jump_one &= open_space;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 6; rank++) {
-            for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_one) != 0) {
-                    Move m{
-                        Square{rank+1, file},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        false
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // BLACK PAWN MOVE: TWO FORWARD
-        unsigned long long jump_two = (sixth_rank & jump_one) >> 8;
-        jump_two &= open_space;
-        mask_bit = 4294967296;
-        for (int file = 1; file <= 8; file++) {
-            if ((mask_bit & jump_two) != 0) {
-                Move m{
-                    Square{7, file},
-                    Square{5, file},
-                    depth,
-                    black_pawn,
-                    false
-                };
-                valid_moves.push_back(m);
-            }
-            mask_bit <<= 1;
-        }
-
-        // BLACK PAWN MOVE: TAKE BOTTOM LEFT
-        unsigned long long take_left = black.pawn_board.bitboard >> 7;
-        take_left &= white_board;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 6; rank++) {
-            mask_bit <<= 1;
-            for (int file = 1; file <= 7; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank+1, file+1},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // BLACK PAWN MOVE: TAKE BOTTOM RIGHT
-        unsigned long long take_right = white.pawn_board.bitboard >> 9;
-        take_right &= white_board;
-        mask_bit = 65536;
-        for (int rank = 1; rank <= 6; rank++) {
-            for (int file = 2; file <= 8; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank+1, file-1},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-            mask_bit <<= 1;
-        }
-    }
-}
-
 void Game::print_moves() {
     for (auto move: valid_moves) {
         std::cout << move << std::endl;
@@ -440,37 +258,6 @@ void Game::set_square(Piece piece, Square& square) {
         std::cout << "something is wrong" << std::endl;
         return;
     }
-}
-
-
-unsigned long long Game::get_bitboard() {
-    unsigned long long bitboard = get_white_bitboard() | get_black_bitboard();
-    return bitboard;
-}
-
-
-unsigned long long Game::get_white_bitboard() {
-    unsigned long long bitboard = 0;
-    bitboard |= white.king_board.bitboard | 
-    white.queen_board.bitboard |
-    white.rook_board.bitboard |
-    white.bishop_board.bitboard |
-    white.knight_board.bitboard |
-    white.pawn_board.bitboard;
-
-    return bitboard;
-}
-
-unsigned long long Game::get_black_bitboard() {
-    unsigned long long bitboard = 0;
-    bitboard |= black.king_board.bitboard |
-    black.queen_board.bitboard |
-    black.rook_board.bitboard |
-    black.bishop_board.bitboard |
-    black.knight_board.bitboard |
-    black.pawn_board.bitboard;
-
-    return bitboard;
 }
 
 
