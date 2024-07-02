@@ -189,7 +189,8 @@ void Game::get_pawn_moves(bool white_move, int depth) {
                         Square{rank-1, file},
                         Square{rank, file},
                         depth,
-                        white_pawn
+                        white_pawn,
+                        false
                     };
                     valid_moves.push_back(m);
                 }
@@ -207,7 +208,8 @@ void Game::get_pawn_moves(bool white_move, int depth) {
                     Square{2, file},
                     Square{4, file},
                     depth,
-                    white_pawn
+                    white_pawn,
+                    false
                 };
                 valid_moves.push_back(m);
             }
@@ -215,17 +217,20 @@ void Game::get_pawn_moves(bool white_move, int depth) {
         }
         return;
 
-        unsigned long long take_left = white.pawn_board.bitboard << 7;
+        // WHITE PAWN MOVE: TAKE FORWARD LEFT
+        unsigned long long take_left = white.pawn_board.bitboard << 9;
         take_left &= black_board;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_two) != 0) {
+        mask_bit = 65536;
+        for (int rank = 3; rank <= 8; rank++) {
+            mask_bit <<= 1;
+            for (int file = 1; file <= 7; file++) {
+                if ((mask_bit & take_left) != 0) {
                     Move m{
-                        Square{rank-2, file},
+                        Square{rank-1, file+1},
                         Square{rank, file},
                         depth,
-                        white_pawn
+                        white_pawn,
+                        true
                     };
                     valid_moves.push_back(m);
                 }
@@ -233,8 +238,26 @@ void Game::get_pawn_moves(bool white_move, int depth) {
             }
         }
 
-        unsigned long long take_right = white.pawn_board.bitboard << 9;
+        // WHITE PAWN MOVE: TAKE FORWARD RIGHT
+        unsigned long long take_right = white.pawn_board.bitboard << 7;
         take_right &= black_board;
+        mask_bit = 65536;
+        for (int rank = 3; rank <= 8; rank++) {
+            for (int file = 2; file <= 8; file++) {
+                if ((mask_bit & take_left) != 0) {
+                    Move m{
+                        Square{rank-1, file+1},
+                        Square{rank, file},
+                        depth,
+                        white_pawn,
+                        true
+                    };
+                    valid_moves.push_back(m);
+                }
+                mask_bit <<= 1;
+            }
+            mask_bit <<= 1;
+        }
     } else {
         Piece black_pawn;
         black_pawn.set(Piece::PieceEncoding::BlackPawn);
@@ -250,7 +273,8 @@ void Game::get_pawn_moves(bool white_move, int depth) {
                         Square{rank+1, file},
                         Square{rank, file},
                         depth,
-                        black_pawn
+                        black_pawn,
+                        false
                     };
                     valid_moves.push_back(m);
                 }
@@ -268,7 +292,8 @@ void Game::get_pawn_moves(bool white_move, int depth) {
                     Square{7, file},
                     Square{5, file},
                     depth,
-                    black_pawn
+                    black_pawn,
+                    false
                 };
                 valid_moves.push_back(m);
             }
