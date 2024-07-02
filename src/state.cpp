@@ -34,6 +34,8 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
     std::vector<GameState> states_to_add;
 
     if (white_turn) {
+        Piece white_pawn_piece;
+        white_pawn_piece.set(Piece::PieceEncoding::WhitePawn);
 
         // No white pawns can be in rank 1 or 8
         mask_bit = 0x100;
@@ -49,203 +51,182 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                         GameState state = *this;
                         state.white_pawns ^= pawn;
                         state.white_pawns |= jump_one;
+                        state.white_turn = false;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank+1, file},
+                            turn,
+                            white_pawn_piece,
+                            false
+                        };
                         states_to_add.push_back(state);
                     }
 
                     // white pawn move two forward
                     if (rank == 2) {
-                        unsigned long long jump_two = jump_one << 8;
+                        unsigned long long jump_two = pawn << 16;
                         if (((jump_two | jump_one) & occupied_space) == 0) {
                             GameState state = *this;
                             state.white_pawns ^= pawn;
                             state.white_pawns |= jump_two;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+2, file},
+                                turn,
+                                white_pawn_piece,
+                                false
+                            };
                             states_to_add.push_back(state); 
                         }
                     }
 
+                    // white pawn takes left
                     if (file != 1) {
-
+                        unsigned long long take_left = pawn << 9;
+                        if ((take_left & black_board) != 0) {
+                            GameState state = *this;
+                            state.white_pawns ^= pawn;
+                            state.white_pawns |= take_left;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file-1},
+                                turn,
+                                white_pawn_piece,
+                                true
+                            };
+                            states_to_add.push_back(state); 
+                        }
                     }
 
+                    // white pawn takes right
                     if (file != 8) {
-
+                        unsigned long long take_right = pawn << 7;
+                        if ((take_right & black_board) != 0) {
+                            GameState state = *this;
+                            state.white_pawns ^= pawn;
+                            state.white_pawns |= take_right;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file+1},
+                                turn,
+                                white_pawn_piece,
+                                true
+                            };
+                            states_to_add.push_back(state); 
+                        }
                     }
 
                 }
 
                 mask_bit <<= 1;
             }
-        }
-
-
-
-
-        Piece white_pawn_piece;
-        white_pawn_piece.set(Piece::PieceEncoding::WhitePawn);
-
-        // WHITE PAWN MOVE: ONE FORWARD
-        unsigned long long jump_one = white_pawn << 8;
-        jump_one &= open_space;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_one) != 0) {
-                    Move m{
-                        Square{rank-1, file},
-                        Square{rank, file},
-                        depth,
-                        white_pawn_piece,
-                        false
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // WHITE PAWN MOVE: TWO FORWARD
-        unsigned long long jump_two = (third_rank & jump_one) << 8;
-        jump_two &= open_space;
-        mask_bit = 16777216;
-        for (int file = 1; file <= 8; file++) {
-            if ((mask_bit & jump_two) != 0) {
-                Move m{
-                    Square{2, file},
-                    Square{4, file},
-                    depth,
-                    white_pawn_piece,
-                    false
-                };
-                valid_moves.push_back(m);
-            }
-            mask_bit <<= 1;
-        }
-        return;
-
-        // WHITE PAWN MOVE: TAKE TOP LEFT
-        unsigned long long take_left = white.pawn_board.bitboard << 9;
-        take_left &= black_board;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            mask_bit <<= 1;
-            for (int file = 1; file <= 7; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank-1, file+1},
-                        Square{rank, file},
-                        depth,
-                        white_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // WHITE PAWN MOVE: TAKE TOP RIGHT
-        unsigned long long take_right = white.pawn_board.bitboard << 7;
-        take_right &= black_board;
-        mask_bit = 65536;
-        for (int rank = 3; rank <= 8; rank++) {
-            for (int file = 2; file <= 8; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank-1, file-1},
-                        Square{rank, file},
-                        depth,
-                        white_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-            mask_bit <<= 1;
         }
     } else {
-        Piece black_pawn;
-        black_pawn.set(Piece::PieceEncoding::BlackPawn);
+        Piece black_pawn_piece;
+        black_pawn_piece.set(Piece::PieceEncoding::BlackPawn);
 
-        // BLACK PAWN MOVE: ONE FORWARD
-        unsigned long long jump_one = black.pawn_board.bitboard >> 8;
-        jump_one &= open_space;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 6; rank++) {
+        // No black pawns can be in rank 1 or 8
+        mask_bit = 0x100;
+        for (int rank = 2; rank < 8; rank++) {
             for (int file = 1; file <= 8; file++) {
-                if ((mask_bit & jump_one) != 0) {
-                    Move m{
-                        Square{rank+1, file},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        false
-                    };
-                    valid_moves.push_back(m);
+                unsigned long long pawn = mask_bit & black_pawns;
+
+                // there is a black pawn at bit "pawn"
+                if (pawn != 0) {
+                    // black pawn move one forward
+                    unsigned long long jump_one = pawn >> 8;
+                    if ((jump_one & open_space) != 0) {
+                        GameState state = *this;
+                        state.black_pawns ^= pawn;
+                        state.black_pawns |= jump_one;
+                        state.white_turn = true;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank-1, file},
+                            turn,
+                            black_pawn_piece,
+                            false
+                        };
+                        states_to_add.push_back(state);
+                    }
+
+                    // black pawn move two forward
+                    if (rank == 7) {
+                        unsigned long long jump_two = pawn >> 16;
+                        if (((jump_two | jump_one) & occupied_space) == 0) {
+                            GameState state = *this;
+                            state.black_pawns ^= pawn;
+                            state.black_pawns |= jump_two;
+                            state.white_turn = true;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-2, file},
+                                turn,
+                                black_pawn_piece,
+                                false
+                            };
+                            states_to_add.push_back(state); 
+                        }
+                    }
+
+                    // black pawn takes left
+                    if (file != 8) {
+                        unsigned long long take_left = pawn >> 9;
+                        if ((take_left & white_board) != 0) {
+                            GameState state = *this;
+                            state.black_pawns ^= pawn;
+                            state.black_pawns |= take_left;
+                            state.white_turn = true;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file+1},
+                                turn,
+                                black_pawn_piece,
+                                true
+                            };
+                            states_to_add.push_back(state); 
+                        }
+                    }
+
+                    // black pawn takes right
+                    if (file != 1) {
+                        unsigned long long take_right = pawn << 7;
+                        if ((take_right & black_board) != 0) {
+                            GameState state = *this;
+                            state.black_pawns ^= pawn;
+                            state.black_pawns |= take_right;
+                            state.white_turn = true;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file-1},
+                                turn,
+                                black_pawn_piece,
+                                true
+                            };
+                            states_to_add.push_back(state); 
+                        }
+                    }
+
                 }
+
                 mask_bit <<= 1;
             }
         }
-
-        // BLACK PAWN MOVE: TWO FORWARD
-        unsigned long long jump_two = (sixth_rank & jump_one) >> 8;
-        jump_two &= open_space;
-        mask_bit = 4294967296;
-        for (int file = 1; file <= 8; file++) {
-            if ((mask_bit & jump_two) != 0) {
-                Move m{
-                    Square{7, file},
-                    Square{5, file},
-                    depth,
-                    black_pawn,
-                    false
-                };
-                valid_moves.push_back(m);
-            }
-            mask_bit <<= 1;
-        }
-
-        // BLACK PAWN MOVE: TAKE BOTTOM LEFT
-        unsigned long long take_left = black.pawn_board.bitboard >> 7;
-        take_left &= white_board;
-        mask_bit = 1;
-        for (int rank = 1; rank <= 6; rank++) {
-            mask_bit <<= 1;
-            for (int file = 1; file <= 7; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank+1, file+1},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-        }
-
-        // BLACK PAWN MOVE: TAKE BOTTOM RIGHT
-        unsigned long long take_right = white.pawn_board.bitboard >> 9;
-        take_right &= white_board;
-        mask_bit = 65536;
-        for (int rank = 1; rank <= 6; rank++) {
-            for (int file = 2; file <= 8; file++) {
-                if ((mask_bit & take_left) != 0) {
-                    Move m{
-                        Square{rank+1, file-1},
-                        Square{rank, file},
-                        depth,
-                        black_pawn,
-                        true
-                    };
-                    valid_moves.push_back(m);
-                }
-                mask_bit <<= 1;
-            }
-            mask_bit <<= 1;
-        }
+        
+    }
+    for (auto s: states_to_add) {
+        states.push_back(s);
     }
 }
 
