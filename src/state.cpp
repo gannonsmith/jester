@@ -435,68 +435,200 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
 
-    const unsigned long long white_board = get_white_bitboard();
-    const unsigned long long black_board = get_black_bitboard();
+    const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
+    const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
 
-    unsigned long long mask_bit = 1;
+    unsigned long long mask_bit = 0x1;
 
     std::vector<GameState> states_to_add;
 
+    Piece knight_piece;
+    unsigned long long friendly_knights;
     if (white_turn) {
-        Piece white_knight_piece;
-        white_knight_piece.set(Piece::PieceEncoding::WhiteKnight);
-        for (int rank = 1; rank <= 8; rank++) {
-            for (int file = 8; file >= 1; file--) {
+        knight_piece.set(Piece::PieceEncoding::WhiteKnight);
+        friendly_knights = white_knights;
+    } else {
+        knight_piece.set(Piece::PieceEncoding::BlackKnight);
+        friendly_knights = black_knights;
+    }
 
-                unsigned long long knight = mask_bit & white_knights;
-                if (knight != 0) {
-                    // 8 different moves
+    for (int rank = 1; rank <= 8; rank++) {
+        for (int file = 8; file >= 1; file--) {
 
-                    // up right
-                    if (rank <= 6 && file <= 7) {
-                        unsigned long long jump = knight << 15;
-                        if (((jump & open_space) != 0) || ((jump & black_board) != 0)) {
-                            GameState state = *this;
-                            state.white_knights ^= knight;
-                            state.white_knights |= jump;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+2, file+1},
-                                turn,
-                                white_knight_piece,
-                                ((jump & black_board) != 0)
-                            };
-                            states_to_add.push_back(state); 
-                        }
-                    }
+            unsigned long long knight = mask_bit & friendly_knights;
+            if (knight != 0) {
+                // 8 different moves
 
-                    // right up
-                    if (rank <= 7 && file <= 6) {
-
-                    }
-
-                    // right down
-                    if (rank >= 2 && file <= 6) {
-
-                    }
-
-                    // down right
-                    if (rank >= 3 && file <= 7) {
-
+                // up right
+                if (rank <= 6 && file <= 7) {
+                    unsigned long long jump = knight << 15;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank+2, file+1},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
                     }
                 }
-                mask_bit <<= 1;
-            }
-        }
-    } else {
 
+                // right up
+                if (rank <= 7 && file <= 6) {
+                    unsigned long long jump = knight << 6;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank+1, file+2},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // right down
+                if (rank >= 2 && file <= 6) {
+                    unsigned long long jump = knight >> 10;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank-1, file+2},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // down right
+                if (rank >= 3 && file <= 7) {
+                    unsigned long long jump = knight >> 17;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank-2, file+1},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // down left
+                if (rank >= 3 && file >= 2) {
+                    unsigned long long jump = knight >> 15;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank-2, file-1},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // left down
+                if (rank >= 2 && file >= 3) {
+                    unsigned long long jump = knight >> 6;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank-1, file-2},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // left up
+                if (rank <= 7 && file >= 3) {
+                    unsigned long long jump = knight << 6;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank+1, file-2},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+
+                // up left
+                if (rank <= 6 && file >= 2) {
+                    unsigned long long jump = knight << 17;
+                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                        GameState state = *this;
+                        state.white_knights ^= knight;
+                        state.white_knights |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {rank+2, file-1},
+                            turn,
+                            knight_piece,
+                            ((jump & enemy_board) != 0)
+                        };
+                        states_to_add.push_back(state); 
+                    }
+                }
+            }
+            mask_bit <<= 1;
+        }
     }
     for (auto s: states_to_add) {
         states.push_back(s);
     }
 }
 
+void GameState::get_bishop_moves(std::vector<GameState>& states) {
+    
+}
 
 
