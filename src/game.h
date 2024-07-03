@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include "player.h"
 #include "helper.h"
 #include "piece.h"
 #include "state.h"
@@ -13,7 +12,6 @@ class Game {
     void run();
 
     void print_board();
-    void print_moves();
 
     /*
     rank, file 1-8
@@ -22,8 +20,6 @@ class Game {
     void fen_setup(std::string& fen_string);
 
     private:
-    Player white;
-    Player black;
     Piece board[64];
     GameState current_state;
     std::vector<GameState> game_states;

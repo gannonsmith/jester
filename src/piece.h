@@ -36,6 +36,7 @@ class Piece {
     };
 
     static Piece get(char c);
+    PieceEncoding get();
     void set(PieceEncoding p);
     std::string get_display() const;
 

@@ -4,6 +4,10 @@ void Piece::set(PieceEncoding p) {
     piece_encoding = p;
 }
 
+Piece::PieceEncoding Piece::get() {
+    return piece_encoding;
+}
+
 Piece Piece::get(char c) {
     Piece piece;
     switch (c) {

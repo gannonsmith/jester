@@ -8,6 +8,8 @@ class GameState {
     public:
 
     void get_pawn_moves(std::vector<GameState>& states);
+    void set(Piece& p, Square& s);
+    void set_empty();
 
     private:
 

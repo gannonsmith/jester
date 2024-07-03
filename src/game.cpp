@@ -4,6 +4,7 @@
 Game::Game() {
 
     max_depth = 5;
+    current_state.set_empty();
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
@@ -23,10 +24,10 @@ void Game::run() {
     Piece p;
     p.set(Piece::PieceEncoding::WhitePawn);
     std::cout << p << std::endl;
-    get_pawn_moves(true, 1);
-    get_pawn_moves(false, 1);
+    //get_pawn_moves(true, 1);
+    //get_pawn_moves(false, 1);
     std::cout << "Total moves: " << game_states.size() << std::endl << std::endl;
-    print_moves();
+    //print_moves();
     return;
     // END TESTING STUFF
 
@@ -162,12 +163,6 @@ void Game::get_moves(bool white_to_move, int depth) {
     
 }
 
-void Game::print_moves() {
-    for (auto move: valid_moves) {
-        std::cout << move << std::endl;
-    }
-}
-
 void Game::fen_setup(std::string& fen_string) {
     int rank = 8;
     int file = 1;
@@ -188,7 +183,6 @@ void Game::fen_setup(std::string& fen_string) {
         file++;
     }
 }
-
 
 void Game::print_board() {
     std::cout << std::endl;
@@ -231,33 +225,7 @@ void Game::print_board() {
 
 void Game::set_square(Piece piece, Square& square) {
     board[(square.rank-1)*8 + square.file-1] = piece;
-
-    Player* p;
-    if (piece.white()) {
-        p = &white;
-    } else if (piece.black()) {
-        p = &black;
-    } else {
-        std::cout << "something is wrong" << std::endl;
-        return;
-    }
-
-    if (piece.king()) {
-        p->king_board.set(square);
-    } else if (piece.queen()) {
-        p->queen_board.set(square);
-    } else if (piece.rook()) {
-        p->rook_board.set(square);
-    } else if (piece.bishop()) {
-        p->bishop_board.set(square);
-    } else if (piece.knight()) {
-        p->knight_board.set(square);
-    } else if (piece.pawn()) {
-        p->pawn_board.set(square);
-    } else {
-        std::cout << "something is wrong" << std::endl;
-        return;
-    }
+    current_state.set(piece, square);
 }
 
 

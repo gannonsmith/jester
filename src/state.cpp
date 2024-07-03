@@ -22,6 +22,69 @@ unsigned long long GameState::get_black_bitboard() {
     return bitboard;
 }
 
+void GameState::set(Piece& p, Square& s) {
+    unsigned long long bit = 1 << ((s.rank-1)*8 + s.file-1);
+    unsigned long long* ptr;
+    switch (p.get()) {
+    case Piece::PieceEncoding::WhiteKing:
+        ptr = &white_kings;
+        break;
+    case Piece::PieceEncoding::WhiteQueen:
+        ptr = &white_queens;
+        break;
+    case Piece::PieceEncoding::WhiteRook:
+        ptr = &white_rooks;
+        break;
+    case Piece::PieceEncoding::WhiteBishop:
+        ptr = &white_bishops;
+        break;
+    case Piece::PieceEncoding::WhiteKnight:
+        ptr = &white_knights;
+        break;
+    case Piece::PieceEncoding::WhitePawn:
+        ptr = &white_pawns;
+        break;
+    case Piece::PieceEncoding::BlackKing:
+        ptr = &black_kings;
+        break;
+    case Piece::PieceEncoding::BlackQueen:
+        ptr = &black_queens;
+        break;
+    case Piece::PieceEncoding::BlackRook:
+        ptr = &black_rooks;
+        break;
+    case Piece::PieceEncoding::BlackBishop:
+        ptr = &black_bishops;
+        break;
+    case Piece::PieceEncoding::BlackKnight:
+        ptr = &black_knights;
+        break;
+    case Piece::PieceEncoding::BlackPawn:
+        ptr = &black_pawns;
+        break;
+    default:
+        break;
+    }
+    *ptr |= bit;
+}
+
+void GameState::set_empty() {
+    white_turn = true;
+    turn = 0;
+    white_kings = 0;
+    white_queens = 0;
+    white_rooks = 0;
+    white_bishops = 0;
+    white_knights = 0;
+    white_pawns = 0;
+    black_kings = 0;
+    black_queens = 0;
+    black_rooks = 0;
+    black_bishops = 0;
+    black_knights = 0;
+    black_pawns = 0;
+}
+
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
