@@ -739,7 +739,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     } else if ((jump & friendly_board) != 0) {
                         break;
                     }
-                    slider.rank++;
+                    slider.rank--;
                     slider.file++;
                 }
 
@@ -782,8 +782,8 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     } else if ((jump & friendly_board) != 0) {
                         break;
                     }
-                    slider.rank++;
-                    slider.file++;
+                    slider.rank--;
+                    slider.file--;
                 }
 
                 // top left
@@ -826,7 +826,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                         break;
                     }
                     slider.rank++;
-                    slider.file++;
+                    slider.file--;
                 }
 
             }
