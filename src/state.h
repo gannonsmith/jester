@@ -7,9 +7,12 @@
 class GameState {
     public:
 
+    void get_states(std::vector<std::vector<GameState>>& states);
+
     void get_pawn_moves(std::vector<GameState>& states);
     void set(Piece& p, Square& s);
     void set_empty();
+    unsigned long long get_bitboard();
 
     private:
 
@@ -29,7 +32,6 @@ class GameState {
     unsigned long long black_pawns;
     Move prev_move;
 
-    unsigned long long get_bitboard();
     unsigned long long get_white_bitboard();
     unsigned long long get_black_bitboard();
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "piece.h"
 
 struct Square {
     int rank;

@@ -24,9 +24,8 @@ void Game::run() {
     Piece p;
     p.set(Piece::PieceEncoding::WhitePawn);
     std::cout << p << std::endl;
-    //get_pawn_moves(true, 1);
-    //get_pawn_moves(false, 1);
-    std::cout << "Total moves: " << game_states.size() << std::endl << std::endl;
+    current_state.get_states(game_states);
+    std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
     //print_moves();
     return;
     // END TESTING STUFF
@@ -230,8 +229,7 @@ void Game::set_square(Piece piece, Square& square) {
 
 
 void Game::print_bitboards() {
-    unsigned long long int bitboard = get_bitboard();
-    
+    unsigned long long int bitboard = current_state.get_bitboard();
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             unsigned long long int tmp = bitboard >> ((rank*8) + file);

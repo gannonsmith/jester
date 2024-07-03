@@ -5,7 +5,6 @@ unsigned long long GameState::get_bitboard() {
     return bitboard;
 }
 
-
 unsigned long long GameState::get_white_bitboard() {
     unsigned long long bitboard = 0;
     bitboard |= white_kings | white_queens | white_rooks |
@@ -23,7 +22,8 @@ unsigned long long GameState::get_black_bitboard() {
 }
 
 void GameState::set(Piece& p, Square& s) {
-    unsigned long long bit = 1 << ((s.rank-1)*8 + s.file-1);
+    unsigned long long bit = 1;
+    bit <<= (s.rank-1)*8 + s.file-1;
     unsigned long long* ptr;
     switch (p.get()) {
     case Piece::PieceEncoding::WhiteKing:
@@ -63,7 +63,8 @@ void GameState::set(Piece& p, Square& s) {
         ptr = &black_pawns;
         break;
     default:
-        break;
+        std::cout << "something broke" << std::endl;
+        return;
     }
     *ptr |= bit;
 }
@@ -83,6 +84,11 @@ void GameState::set_empty() {
     black_bishops = 0;
     black_knights = 0;
     black_pawns = 0;
+}
+
+void GameState::get_states(std::vector<std::vector<GameState>>& states) {
+    states.push_back({});
+    get_pawn_moves(states[0]);
 }
 
 void GameState::get_pawn_moves(std::vector<GameState>& states) {

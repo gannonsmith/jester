@@ -22,7 +22,7 @@ class Game {
     private:
     Piece board[64];
     GameState current_state;
-    std::vector<GameState> game_states;
+    std::vector<std::vector<GameState>> game_states;
     int max_depth;
 
     void get_moves(bool white_to_move, int depth);
