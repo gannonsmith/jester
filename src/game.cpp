@@ -8,6 +8,7 @@ Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    fen = "rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBQKBNR";
     //std::cin >> fen;
     fen_setup(fen);
 

@@ -90,6 +90,7 @@ void GameState::get_states(std::vector<std::vector<GameState>>& states) {
     states.push_back({});
     get_pawn_moves(states[0]);
     get_knight_moves(states[0]);
+    get_bishop_moves(states[0]);
 }
 
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
@@ -648,7 +649,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
     }
 
     for (int rank = 1; rank <= 8; rank++) {
-        for (int file = 8; file >= 1; file++) {
+        for (int file = 8; file >= 1; file--) {
 
             const unsigned long long bishop = mask_bit & friendly_bishops;
             unsigned long long jump = bishop;
