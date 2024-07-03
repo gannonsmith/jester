@@ -435,7 +435,6 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
 
-    const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
     const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
 
     unsigned long long mask_bit = 0x1;
@@ -705,7 +704,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                 slider.rank = rank-1;
                 slider.file = file+1;
                 jump = bishop;
-                while (slider.rank <= 8 && slider.file <= 8) {
+                while (slider.rank >= 1 && slider.file <= 8) {
                     jump >>= 9;
 
                     if ((jump & open_space) != 0) {
@@ -748,7 +747,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                 slider.rank = rank-1;
                 slider.file = file-1;
                 jump = bishop;
-                while (slider.rank <= 8 && slider.file <= 8) {
+                while (slider.rank >= 1 && slider.file >= 1) {
                     jump >>= 7;
 
                     if ((jump & open_space) != 0) {
@@ -791,7 +790,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                 slider.rank = rank+1;
                 slider.file = file-1;
                 jump = bishop;
-                while (slider.rank <= 8 && slider.file <= 8) {
+                while (slider.rank <= 8 && slider.file >= 1) {
                     jump <<= 9;
 
                     if ((jump & open_space) != 0) {
