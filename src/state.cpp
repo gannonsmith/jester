@@ -272,7 +272,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
         mask_bit = 0x100;
         for (int rank = 2; rank < 8; rank++) {
             for (int file = 1; file <= 8; file++) {
-                unsigned long long pawn = mask_bit & black_pawns;
+                const unsigned long long pawn = mask_bit & black_pawns;
 
                 // there is a black pawn at bit "pawn"
                 if (pawn != 0) {
@@ -455,7 +455,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
     for (int rank = 1; rank <= 8; rank++) {
         for (int file = 8; file >= 1; file--) {
 
-            unsigned long long knight = mask_bit & friendly_knights;
+            const unsigned long long knight = mask_bit & friendly_knights;
             if (knight != 0) {
                 // 8 different moves
 
@@ -628,7 +628,216 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 }
 
 void GameState::get_bishop_moves(std::vector<GameState>& states) {
-    
+    const unsigned long long occupied_space = get_bitboard();
+    const unsigned long long open_space = ~occupied_space;
+
+    const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
+    const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
+
+    unsigned long long mask_bit = 0x1;
+
+    std::vector<GameState> states_to_add;
+
+    Piece bishop_piece;
+    unsigned long long friendly_bishops;
+    if (white_turn) {
+        bishop_piece.set(Piece::PieceEncoding::WhiteKnight);
+        friendly_bishops = white_bishops;
+    } else {
+        bishop_piece.set(Piece::PieceEncoding::BlackKnight);
+        friendly_bishops = black_bishops;
+    }
+
+    for (int rank = 1; rank <= 8; rank++) {
+        for (int file = 8; file >= 1; file++) {
+
+            const unsigned long long bishop = mask_bit & friendly_bishops;
+            unsigned long long jump = bishop;
+
+            if (bishop != 0) {
+                //bishop exists
+                Square slider;
+
+                // top right
+                slider.rank = rank+1;
+                slider.file = file+1;
+                jump = bishop;
+                while (slider.rank <= 8 && slider.file <= 8) {
+                    jump <<= 7;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file++;
+                }
+
+                // bottom right
+                slider.rank = rank-1;
+                slider.file = file+1;
+                jump = bishop;
+                while (slider.rank <= 8 && slider.file <= 8) {
+                    jump >>= 9;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file++;
+                }
+
+                // bottom left
+                slider.rank = rank-1;
+                slider.file = file-1;
+                jump = bishop;
+                while (slider.rank <= 8 && slider.file <= 8) {
+                    jump >>= 7;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file++;
+                }
+
+                // top left
+                slider.rank = rank+1;
+                slider.file = file-1;
+                jump = bishop;
+                while (slider.rank <= 8 && slider.file <= 8) {
+                    jump <<= 9;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        state.white_bishops ^= bishop;
+                        state.white_bishops |= jump;
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            bishop_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file++;
+                }
+
+            }
+            mask_bit <<= 1;
+        }
+    }
+
+    for (auto s: states_to_add) {
+        states.push_back(s);
+    }
 }
 
 
