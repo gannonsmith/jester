@@ -117,19 +117,42 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     // white pawn move one forward
                     unsigned long long jump_one = pawn << 8;
                     if ((jump_one & open_space) != 0) {
-                        GameState state = *this;
-                        state.white_pawns ^= pawn;
-                        state.white_pawns |= jump_one;
-                        state.white_turn = false;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank+1, file},
-                            turn,
-                            white_pawn_piece,
-                            false
-                        };
-                        states_to_add.push_back(state);
+                        // handle upgrading pawn
+                        if (rank == 7) {
+                            GameState state = *this;
+                            state.white_pawns ^= pawn;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file},
+                                turn,
+                                white_pawn_piece,
+                                false
+                            };
+                            state.white_queens |= jump_one;
+                            states_to_add.push_back(state);
+                            state.white_rooks |= jump_one;
+                            states_to_add.push_back(state);
+                            state.white_bishops |= jump_one;
+                            states_to_add.push_back(state);
+                            state.white_knights |= jump_one;
+                            states_to_add.push_back(state);
+                        } else {
+                            GameState state = *this;
+                            state.white_pawns ^= pawn;
+                            state.white_pawns |= jump_one;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file},
+                                turn,
+                                white_pawn_piece,
+                                false
+                            };
+                            states_to_add.push_back(state);
+                        }
                     }
 
                     // white pawn move two forward
@@ -156,19 +179,41 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     if (file != 1) {
                         unsigned long long take_left = pawn << 9;
                         if ((take_left & black_board) != 0) {
-                            GameState state = *this;
-                            state.white_pawns ^= pawn;
-                            state.white_pawns |= take_left;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+1, file-1},
-                                turn,
-                                white_pawn_piece,
-                                true
-                            };
-                            states_to_add.push_back(state); 
+                            if (rank == 7) {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file-1},
+                                    turn,
+                                    white_pawn_piece,
+                                    true
+                                };
+                                state.white_queens |= take_left;
+                                states_to_add.push_back(state);
+                                state.white_rooks |= take_left;
+                                states_to_add.push_back(state);
+                                state.white_bishops |= take_left;
+                                states_to_add.push_back(state);
+                                state.white_knights |= take_left;
+                                states_to_add.push_back(state);
+                            } else {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_pawns |= take_left;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file-1},
+                                    turn,
+                                    white_pawn_piece,
+                                    true
+                                };
+                                states_to_add.push_back(state);
+                            } 
                         }
                     }
 
@@ -176,19 +221,41 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     if (file != 8) {
                         unsigned long long take_right = pawn << 7;
                         if ((take_right & black_board) != 0) {
-                            GameState state = *this;
-                            state.white_pawns ^= pawn;
-                            state.white_pawns |= take_right;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+1, file+1},
-                                turn,
-                                white_pawn_piece,
-                                true
-                            };
-                            states_to_add.push_back(state); 
+                            if (rank == 7) {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file+1},
+                                    turn,
+                                    white_pawn_piece,
+                                    true
+                                };
+                                state.white_queens |= take_right;
+                                states_to_add.push_back(state);
+                                state.white_rooks |= take_right;
+                                states_to_add.push_back(state); 
+                                state.white_bishops |= take_right;
+                                states_to_add.push_back(state); 
+                                state.white_knights |= take_right;
+                                states_to_add.push_back(state); 
+                            } else {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_pawns |= take_right;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file+1},
+                                    turn,
+                                    white_pawn_piece,
+                                    true
+                                };
+                                states_to_add.push_back(state); 
+                            }
                         }
                     }
 
@@ -212,19 +279,41 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     // black pawn move one forward
                     unsigned long long jump_one = pawn >> 8;
                     if ((jump_one & open_space) != 0) {
-                        GameState state = *this;
-                        state.black_pawns ^= pawn;
-                        state.black_pawns |= jump_one;
-                        state.white_turn = true;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank-1, file},
-                            turn,
-                            black_pawn_piece,
-                            false
-                        };
-                        states_to_add.push_back(state);
+                        if (rank == 2) {
+                            GameState state = *this;
+                            state.black_pawns ^= pawn;
+                            state.white_turn = true;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file},
+                                turn,
+                                black_pawn_piece,
+                                false
+                            };
+                            state.black_queens |= jump_one;
+                            states_to_add.push_back(state);
+                            state.black_rooks |= jump_one;
+                            states_to_add.push_back(state);
+                            state.black_bishops |= jump_one;
+                            states_to_add.push_back(state);
+                            state.black_knights |= jump_one;
+                            states_to_add.push_back(state);
+                        } else {
+                            GameState state = *this;
+                            state.black_pawns ^= pawn;
+                            state.black_pawns |= jump_one;
+                            state.white_turn = true;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file},
+                                turn,
+                                black_pawn_piece,
+                                false
+                            };
+                            states_to_add.push_back(state);
+                        }
                     }
 
                     // black pawn move two forward
@@ -251,19 +340,41 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     if (file != 8) {
                         unsigned long long take_left = pawn >> 9;
                         if ((take_left & white_board) != 0) {
-                            GameState state = *this;
-                            state.black_pawns ^= pawn;
-                            state.black_pawns |= take_left;
-                            state.white_turn = true;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank-1, file+1},
-                                turn,
-                                black_pawn_piece,
-                                true
-                            };
-                            states_to_add.push_back(state); 
+                            if (rank == 2) {
+                                GameState state = *this;
+                                state.black_pawns ^= pawn;
+                                state.white_turn = true;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank-1, file+1},
+                                    turn,
+                                    black_pawn_piece,
+                                    true
+                                };
+                                state.black_queens |= take_left;
+                                states_to_add.push_back(state); 
+                                state.black_rooks |= take_left;
+                                states_to_add.push_back(state); 
+                                state.black_bishops |= take_left;
+                                states_to_add.push_back(state); 
+                                state.black_knights |= take_left;
+                                states_to_add.push_back(state); 
+                            } else {
+                                GameState state = *this;
+                                state.black_pawns ^= pawn;
+                                state.black_pawns |= take_left;
+                                state.white_turn = true;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank-1, file+1},
+                                    turn,
+                                    black_pawn_piece,
+                                    true
+                                };
+                                states_to_add.push_back(state); 
+                            }
                         }
                     }
 
@@ -271,24 +382,45 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     if (file != 1) {
                         unsigned long long take_right = pawn << 7;
                         if ((take_right & black_board) != 0) {
-                            GameState state = *this;
-                            state.black_pawns ^= pawn;
-                            state.black_pawns |= take_right;
-                            state.white_turn = true;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank-1, file-1},
-                                turn,
-                                black_pawn_piece,
-                                true
-                            };
-                            states_to_add.push_back(state); 
+                            if (rank == 2) {
+                                GameState state = *this;
+                                state.black_pawns ^= pawn;
+                                state.white_turn = true;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank-1, file-1},
+                                    turn,
+                                    black_pawn_piece,
+                                    true
+                                };
+                                state.black_queens |= take_right;
+                                states_to_add.push_back(state); 
+                                state.black_rooks |= take_right;
+                                states_to_add.push_back(state); 
+                                state.black_bishops |= take_right;
+                                states_to_add.push_back(state); 
+                                state.black_knights |= take_right;
+                                states_to_add.push_back(state); 
+                            } else {
+                                GameState state = *this;
+                                state.black_pawns ^= pawn;
+                                state.black_pawns |= take_right;
+                                state.white_turn = true;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank-1, file-1},
+                                    turn,
+                                    black_pawn_piece,
+                                    true
+                                };
+                                states_to_add.push_back(state); 
+                            }
                         }
                     }
 
                 }
-
                 mask_bit <<= 1;
             }
         }
