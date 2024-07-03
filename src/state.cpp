@@ -89,6 +89,7 @@ void GameState::set_empty() {
 void GameState::get_states(std::vector<std::vector<GameState>>& states) {
     states.push_back({});
     get_pawn_moves(states[0]);
+    get_knight_moves(states[0]);
 }
 
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
@@ -98,7 +99,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
     const unsigned long long white_board = get_white_bitboard();
     const unsigned long long black_board = get_black_bitboard();
 
-    unsigned long long mask_bit;
+    unsigned long long mask_bit = 0x100;;
 
     std::vector<GameState> states_to_add;
 
@@ -107,9 +108,8 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
         white_pawn_piece.set(Piece::PieceEncoding::WhitePawn);
 
         // No white pawns can be in rank 1 or 8
-        mask_bit = 0x100;
         for (int rank = 2; rank < 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
+            for (int file = 8; file >= 1; file--) {
                 unsigned long long pawn = mask_bit & white_pawns;
 
                 // there is a white pawn at bit "pawn"
@@ -425,6 +425,73 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
             }
         }
         
+    }
+    for (auto s: states_to_add) {
+        states.push_back(s);
+    }
+}
+
+void GameState::get_knight_moves(std::vector<GameState>& states) {
+    const unsigned long long occupied_space = get_bitboard();
+    const unsigned long long open_space = ~occupied_space;
+
+    const unsigned long long white_board = get_white_bitboard();
+    const unsigned long long black_board = get_black_bitboard();
+
+    unsigned long long mask_bit = 1;
+
+    std::vector<GameState> states_to_add;
+
+    if (white_turn) {
+        Piece white_knight_piece;
+        white_knight_piece.set(Piece::PieceEncoding::WhiteKnight);
+        for (int rank = 1; rank <= 8; rank++) {
+            for (int file = 8; file >= 1; file--) {
+
+                unsigned long long knight = mask_bit & white_knights;
+                if (knight != 0) {
+                    // 8 different moves
+
+                    // up right
+                    if (rank <= 6 && file <= 7) {
+                        unsigned long long jump = knight << 15;
+                        if (((jump & open_space) != 0) || ((jump & black_board) != 0)) {
+                            GameState state = *this;
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                            state.white_turn = false;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+2, file+1},
+                                turn,
+                                white_knight_piece,
+                                ((jump & black_board) != 0)
+                            };
+                            states_to_add.push_back(state); 
+                        }
+                    }
+
+                    // right up
+                    if (rank <= 7 && file <= 6) {
+
+                    }
+
+                    // right down
+                    if (rank >= 2 && file <= 6) {
+
+                    }
+
+                    // down right
+                    if (rank >= 3 && file <= 7) {
+
+                    }
+                }
+                mask_bit <<= 1;
+            }
+        }
+    } else {
+
     }
     for (auto s: states_to_add) {
         states.push_back(s);

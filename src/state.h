@@ -10,6 +10,8 @@ class GameState {
     void get_states(std::vector<std::vector<GameState>>& states);
 
     void get_pawn_moves(std::vector<GameState>& states);
+    void get_knight_moves(std::vector<GameState>& states);
+
     void set(Piece& p, Square& s);
     void set_empty();
     unsigned long long get_bitboard();
