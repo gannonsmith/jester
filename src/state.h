@@ -9,6 +9,7 @@ class GameState {
 
     void get_states(std::vector<std::vector<GameState>>& states);
     static unsigned long long create_state(unsigned long long old_board, unsigned long long moving_piece, unsigned long long new_move);
+    void remove_capture(bool white_takes, unsigned long long position);
 
     void get_pawn_moves(std::vector<GameState>& states);
     void get_knight_moves(std::vector<GameState>& states);
