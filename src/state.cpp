@@ -785,10 +785,10 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
         for (int file = 8; file >= 1; file--) {
 
             const unsigned long long bishop = mask_bit & friendly_bishops;
-            unsigned long long jump = bishop;
 
             if (bishop != 0) {
                 //bishop exists
+                unsigned long long jump;
                 Square slider;
 
                 // top right
@@ -800,8 +800,13 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -814,8 +819,14 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -843,8 +854,13 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -857,8 +873,14 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -886,8 +908,13 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -900,8 +927,14 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -929,8 +962,13 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -943,8 +981,14 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
-                        state.white_bishops ^= bishop;
-                        state.white_bishops |= jump;
+                        if (white_turn) {
+                            state.white_bishops ^= bishop;
+                            state.white_bishops |= jump;
+                        } else {
+                            state.black_bishops ^= bishop;
+                            state.black_bishops |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
