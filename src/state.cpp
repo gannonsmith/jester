@@ -93,6 +93,12 @@ void GameState::get_states(std::vector<std::vector<GameState>>& states) {
     get_bishop_moves(states[0]);
 }
 
+unsigned long long create_state(unsigned long long board, unsigned long long moving_piece, unsigned long long new_move) {
+    board ^= moving_piece;
+    board |= new_move;
+    return board;
+}
+
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
