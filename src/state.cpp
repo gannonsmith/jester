@@ -139,12 +139,19 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                             };
                             state.white_queens |= jump_one;
                             states_to_add.push_back(state);
+                            state.white_queens ^= jump_one;
+
                             state.white_rooks |= jump_one;
                             states_to_add.push_back(state);
+                            state.white_rooks ^= jump_one;
+
                             state.white_bishops |= jump_one;
                             states_to_add.push_back(state);
-                            state.white_knights |= jump_one;
+                            state.white_rooks ^= jump_one;
+
+                            state.white_bishops |= jump_one;
                             states_to_add.push_back(state);
+                            state.white_knights ^= jump_one;
                         } else {
                             GameState state = *this;
                             state.white_pawns ^= pawn;
@@ -198,14 +205,21 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     white_pawn_piece,
                                     true
                                 };
-                                state.white_queens |= take_left;
+                                state.white_queens |= jump_one;
                                 states_to_add.push_back(state);
-                                state.white_rooks |= take_left;
+                                state.white_queens ^= jump_one;
+
+                                state.white_rooks |= jump_one;
                                 states_to_add.push_back(state);
-                                state.white_bishops |= take_left;
+                                state.white_rooks ^= jump_one;
+
+                                state.white_bishops |= jump_one;
                                 states_to_add.push_back(state);
-                                state.white_knights |= take_left;
+                                state.white_rooks ^= jump_one;
+
+                                state.white_bishops |= jump_one;
                                 states_to_add.push_back(state);
+                                state.white_knights ^= jump_one;
                             } else {
                                 GameState state = *this;
                                 state.white_pawns ^= pawn;
@@ -240,14 +254,21 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     white_pawn_piece,
                                     true
                                 };
-                                state.white_queens |= take_right;
+                                state.white_queens |= jump_one;
                                 states_to_add.push_back(state);
-                                state.white_rooks |= take_right;
-                                states_to_add.push_back(state); 
-                                state.white_bishops |= take_right;
-                                states_to_add.push_back(state); 
-                                state.white_knights |= take_right;
-                                states_to_add.push_back(state); 
+                                state.white_queens ^= jump_one;
+
+                                state.white_rooks |= jump_one;
+                                states_to_add.push_back(state);
+                                state.white_rooks ^= jump_one;
+
+                                state.white_bishops |= jump_one;
+                                states_to_add.push_back(state);
+                                state.white_rooks ^= jump_one;
+
+                                state.white_bishops |= jump_one;
+                                states_to_add.push_back(state);
+                                state.white_knights ^= jump_one;
                             } else {
                                 GameState state = *this;
                                 state.white_pawns ^= pawn;
@@ -300,12 +321,19 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                             };
                             state.black_queens |= jump_one;
                             states_to_add.push_back(state);
+                            state.black_queens ^= jump_one;
+
                             state.black_rooks |= jump_one;
                             states_to_add.push_back(state);
+                            state.black_rooks ^= jump_one;
+
                             state.black_bishops |= jump_one;
                             states_to_add.push_back(state);
+                            state.black_bishops ^= jump_one;
+
                             state.black_knights |= jump_one;
                             states_to_add.push_back(state);
+                            state.black_knights ^= jump_one;
                         } else {
                             GameState state = *this;
                             state.black_pawns ^= pawn;
@@ -359,14 +387,21 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     black_pawn_piece,
                                     true
                                 };
-                                state.black_queens |= take_left;
-                                states_to_add.push_back(state); 
-                                state.black_rooks |= take_left;
-                                states_to_add.push_back(state); 
-                                state.black_bishops |= take_left;
-                                states_to_add.push_back(state); 
-                                state.black_knights |= take_left;
-                                states_to_add.push_back(state); 
+                                state.black_queens |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_queens ^= jump_one;
+
+                                state.black_rooks |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_rooks ^= jump_one;
+
+                                state.black_bishops |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_bishops ^= jump_one;
+
+                                state.black_knights |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_knights ^= jump_one; 
                             } else {
                                 GameState state = *this;
                                 state.black_pawns ^= pawn;
@@ -401,14 +436,21 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     black_pawn_piece,
                                     true
                                 };
-                                state.black_queens |= take_right;
-                                states_to_add.push_back(state); 
-                                state.black_rooks |= take_right;
-                                states_to_add.push_back(state); 
-                                state.black_bishops |= take_right;
-                                states_to_add.push_back(state); 
-                                state.black_knights |= take_right;
-                                states_to_add.push_back(state); 
+                                state.black_queens |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_queens ^= jump_one;
+
+                                state.black_rooks |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_rooks ^= jump_one;
+
+                                state.black_bishops |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_bishops ^= jump_one;
+
+                                state.black_knights |= jump_one;
+                                states_to_add.push_back(state);
+                                state.black_knights ^= jump_one; 
                             } else {
                                 GameState state = *this;
                                 state.black_pawns ^= pawn;
