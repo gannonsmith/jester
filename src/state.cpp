@@ -506,12 +506,10 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                             }
                         }
                     }
-
                 }
                 mask_bit <<= 1;
             }
         }
-        
     }
     for (auto s: states_to_add) {
         states.push_back(s);
@@ -523,6 +521,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
     const unsigned long long open_space = ~occupied_space;
 
     const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
+    const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
 
     unsigned long long mask_bit = 0x1;
 
@@ -547,11 +546,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // up right
                 if (rank <= 6 && file <= 7) {
-                    unsigned long long jump = knight << 15;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight << 15;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -567,11 +572,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // right up
                 if (rank <= 7 && file <= 6) {
-                    unsigned long long jump = knight << 6;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight << 6;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -587,11 +598,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // right down
                 if (rank >= 2 && file <= 6) {
-                    unsigned long long jump = knight >> 10;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight >> 10;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -607,11 +624,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // down right
                 if (rank >= 3 && file <= 7) {
-                    unsigned long long jump = knight >> 17;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight >> 17;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -627,11 +650,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // down left
                 if (rank >= 3 && file >= 2) {
-                    unsigned long long jump = knight >> 15;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight >> 15;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -647,11 +676,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // left down
                 if (rank >= 2 && file >= 3) {
-                    unsigned long long jump = knight >> 6;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight >> 6;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -667,11 +702,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // left up
                 if (rank <= 7 && file >= 3) {
-                    unsigned long long jump = knight << 6;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight << 6;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
@@ -687,11 +728,17 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // up left
                 if (rank <= 6 && file >= 2) {
-                    unsigned long long jump = knight << 17;
-                    if (((jump & open_space) != 0) || ((jump & enemy_board) != 0)) {
+                    const unsigned long long jump = knight << 17;
+                    if ((jump & friendly_board) == 0) {
                         GameState state = *this;
-                        state.white_knights ^= knight;
-                        state.white_knights |= jump;
+                        if (white_turn) {
+                            state.white_knights ^= knight;
+                            state.white_knights |= jump;
+                        } else {
+                            state.black_knights ^= knight;
+                            state.black_knights |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
                         state.turn++;
                         state.prev_move = {
