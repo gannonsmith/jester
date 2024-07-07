@@ -15,7 +15,8 @@ class GameState {
     void get_knight_moves(std::vector<GameState>& states);
     void get_bishop_moves(std::vector<GameState>& states);
     void get_rook_moves(std::vector<GameState>& states);
-
+    void get_queen_moves(std::vector<GameState>& states);
+    
     void set(Piece& p, Square& s);
     void set_empty();
     unsigned long long get_bitboard();

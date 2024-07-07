@@ -2,19 +2,11 @@
 
 Jester is a chess engine.
 
-Hopefully it will be better than me.
+It uses various game theory techniques including bitboards and alpha-beta pruning to optimize for correctness and efficieny.
 
-## Helpful
+## Quickstart
 
-Board Encodings:
+- Clone this repo
+- build with "make"
+- run "./chess"
 
-Black: lowercase
-
-White: uppercase
-
-King:   Kk
-Queen:  Qq
-Rook:   Rr
-Bishop: Bb
-Knight: Nn
-Pawn:   Pp
