@@ -1,4 +1,4 @@
-# jester
+# Jester
 
 Jester is a chess engine.
 
