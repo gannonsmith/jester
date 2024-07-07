@@ -8,7 +8,7 @@ Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBQKBNR";
+    fen = "rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/8/RNBQKBNR";
     //std::cin >> fen;
     fen_setup(fen);
 
@@ -22,9 +22,6 @@ Game::Game() {
 
 void Game::run() {
     // TESTING STUFF
-    Piece p;
-    p.set(Piece::PieceEncoding::WhitePawn);
-    std::cout << p << std::endl;
     current_state.get_states(game_states);
     std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
     //print_moves();
@@ -224,19 +221,23 @@ void Game::print_board() {
 
 
 void Game::set_square(Piece piece, Square& square) {
-    board[(square.rank-1)*8 + square.file-1] = piece;
+    board[(square.rank-1)*8 + 8-square.file] = piece;
     current_state.set(piece, square);
 }
 
 
 void Game::print_bitboards() {
-    unsigned long long int bitboard = current_state.get_bitboard();
-    for (int rank = 0; rank < 8; rank++) {
-        for (int file = 0; file < 8; file++) {
-            unsigned long long int tmp = bitboard >> ((rank*8) + file);
-            unsigned long long int one = 1;
-            auto t = tmp & one;
-            std::cout << t;
+    const unsigned long long int bitboard = current_state.get_bitboard();
+    unsigned long long bit = 1;
+    bit <<= 63;
+    for (int rank = 8; rank >= 1; rank--) {
+        for (int file = 1; file <= 8; file++) {
+            if ((bit & bitboard) == 0) {
+                std::cout << 0;
+            } else {
+                std::cout << 1;
+            }
+            bit >>= 1;
         }
         std::cout << std::endl;
     }

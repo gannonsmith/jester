@@ -23,7 +23,7 @@ unsigned long long GameState::get_black_bitboard() {
 
 void GameState::set(Piece& p, Square& s) {
     unsigned long long bit = 1;
-    bit <<= (s.rank-1)*8 + s.file-1;
+    bit <<= (s.rank-1)*8 + 8-s.file;
     unsigned long long* ptr;
     switch (p.get()) {
     case Piece::PieceEncoding::WhiteKing:
@@ -518,7 +518,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
 
 void GameState::get_knight_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
-    const unsigned long long open_space = ~occupied_space;
+    //const unsigned long long open_space = ~occupied_space;
 
     const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
     const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
@@ -702,7 +702,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
 
                 // left up
                 if (rank <= 7 && file >= 3) {
-                    const unsigned long long jump = knight << 6;
+                    const unsigned long long jump = knight << 10;
                     if ((jump & friendly_board) == 0) {
                         GameState state = *this;
                         if (white_turn) {
@@ -1015,6 +1015,11 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
     for (auto s: states_to_add) {
         states.push_back(s);
     }
+}
+
+
+void GameState::get_rook_moves(std::vector<GameState>& states) {
+    
 }
 
 
