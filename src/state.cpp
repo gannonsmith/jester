@@ -1324,46 +1324,68 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     jump <<= 7;
 
                     if ((jump & open_space) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     } else if ((jump & enemy_board) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            true
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                true
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                         break;
                     } else if ((jump & friendly_board) != 0) {
                         break;
@@ -1380,45 +1402,67 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     jump >>= 9;
 
                     if ((jump & open_space) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            false
-                        };
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                false
+                            };
+                            states_to_add.push_back(state); 
+                        }
                     } else if ((jump & enemy_board) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            true
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                true
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                         break;
                     } else if ((jump & friendly_board) != 0) {
                         break;
@@ -1435,45 +1479,67 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     jump >>= 7;
 
                     if ((jump & open_space) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            false
-                        };
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                false
+                            };
+                            states_to_add.push_back(state); 
+                        }
                     } else if ((jump & enemy_board) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            true
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                true
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                         break;
                     } else if ((jump & friendly_board) != 0) {
                         break;
@@ -1490,46 +1556,68 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                     jump <<= 9;
 
                     if ((jump & open_space) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     } else if ((jump & enemy_board) != 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_bishops ^= bishop;
-                            state.white_bishops |= jump;
+                            check_state.white_bishops ^= bishop;
+                            check_state.white_bishops |= jump;
                         } else {
-                            state.black_bishops ^= bishop;
-                            state.black_bishops |= jump;
+                            check_state.black_bishops ^= bishop;
+                            check_state.black_bishops |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {slider.rank, slider.file},
-                            turn,
-                            bishop_piece,
-                            true
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_bishops ^= bishop;
+                                state.white_bishops |= jump;
+                            } else {
+                                state.black_bishops ^= bishop;
+                                state.black_bishops |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {slider.rank, slider.file},
+                                turn,
+                                bishop_piece,
+                                true
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                         break;
                     } else if ((jump & friendly_board) != 0) {
                         break;
