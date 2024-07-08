@@ -455,9 +455,7 @@ unsigned long long GameState::generate_capture_spaces() {
 }
 
 bool GameState::space_check(const unsigned long long position) {
-    //TODO 
-    return position & get_white_bitboard();
-
+    return (position & under_attack) != 0;
 }
 
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
