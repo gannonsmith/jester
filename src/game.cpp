@@ -7,7 +7,7 @@ Game::Game() {
     current_state.set_empty();
 
     std::cout << "Enter starting FEN string:" << std::endl;
-    std::string fen = "8/8/8/8/1r6/4K3/6r1/3r1r2";
+    std::string fen = "1r4K1/1r6/6N1/8/8/8/8/8";
     //fen = "8/8/8/8/8/8/8/8";
     //std::cin >> fen;
     fen_setup(fen);
