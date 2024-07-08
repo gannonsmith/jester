@@ -32,7 +32,7 @@ void Game::run() {
 
     std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
     std::string move;
-    bool valid_move;
+    //bool valid_move;
 
     int count = 0;
     while (count == 0) {
