@@ -2,7 +2,7 @@
 
 Jester is a chess engine.
 
-It uses various game theory techniques including bitboards and alpha-beta pruning to optimize for correctness and efficieny.
+It uses various game theory techniques including bitboards and alpha-beta pruning to optimize for correctness and efficiency.
 
 ## Quickstart
 
