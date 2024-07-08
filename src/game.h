@@ -32,5 +32,5 @@ class Game {
     bool valid_piece(Piece& piece, char piece_c, bool white);
     bool valid_square(Square& square, char rank, char file);
 
-    void print_bitboards();
+    static void print_bitboards(const unsigned long long bitboard);
 };

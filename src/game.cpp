@@ -8,23 +8,25 @@ Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "rnbqkbnr/8/p6p/8/8/PPPPPPPP/8/RNBQKBNR";
+    fen = "8/8/8/8/8/8/8/8";
     //std::cin >> fen;
     fen_setup(fen);
 
     std::cout << "Initial Setup:" << std::endl;
     print_board();
 
-    print_bitboards();
+    print_bitboards(current_state.get_bitboard());
+    //std::cout << std::endl << "breakpoint" << std::endl;
 
     std::cout << "Moves should be printed in long algebraic notation." << std::endl;
 }
 
 void Game::run() {
     // TESTING STUFF
-    current_state.test_switch_turn();
+    //current_state.test_switch_turn();
     current_state.get_states(game_states);
     std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
+    print_bitboards(current_state.generate_capture_spaces());
     //print_moves();
     return;
     // END TESTING STUFF
@@ -227,8 +229,7 @@ void Game::set_square(Piece piece, Square& square) {
 }
 
 
-void Game::print_bitboards() {
-    const unsigned long long int bitboard = current_state.get_bitboard();
+void Game::print_bitboards(const unsigned long long bitboard) {
     unsigned long long bit = 1;
     bit <<= 63;
     for (int rank = 8; rank >= 1; rank--) {
