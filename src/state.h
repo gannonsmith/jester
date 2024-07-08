@@ -22,6 +22,8 @@ class GameState {
     void set_empty();
     unsigned long long get_bitboard();
 
+    void test_switch_turn();
+
     private:
 
     bool white_turn;

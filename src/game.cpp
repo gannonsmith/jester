@@ -8,7 +8,7 @@ Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "rnbqkbnr/pppppppp/8/8/8/PPPPPPPP/8/RNBQKBNR";
+    fen = "rnbqkbnr/8/p6p/8/8/PPPPPPPP/8/RNBQKBNR";
     //std::cin >> fen;
     fen_setup(fen);
 
@@ -22,6 +22,7 @@ Game::Game() {
 
 void Game::run() {
     // TESTING STUFF
+    current_state.test_switch_turn();
     current_state.get_states(game_states);
     std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
     //print_moves();

@@ -1,5 +1,9 @@
 #include "state.h"
 
+void GameState::test_switch_turn() {
+    white_turn = !white_turn;
+}
+
 unsigned long long GameState::get_bitboard() {
     unsigned long long bitboard = get_white_bitboard() | get_black_bitboard();
     return bitboard;
@@ -325,10 +329,9 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
         Piece black_pawn_piece;
         black_pawn_piece.set(Piece::PieceEncoding::BlackPawn);
 
-        // No black pawns can be in rank 1 or 8
-        mask_bit = 0x100;
-        for (int rank = 2; rank < 8; rank++) {
-            for (int file = 1; file <= 8; file++) {
+        mask_bit = 0x1;
+        for (int rank = 1; rank < 8; rank++) {
+            for (int file = 8; file >= 1; file--) {
                 const unsigned long long pawn = mask_bit & black_pawns;
 
                 // there is a black pawn at bit "pawn"
