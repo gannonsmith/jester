@@ -7,6 +7,8 @@
 class GameState {
     public:
 
+    unsigned long long under_attack;
+
     void get_states(std::vector<std::vector<GameState>>& states);
     static unsigned long long create_state(unsigned long long old_board, unsigned long long moving_piece, unsigned long long new_move);
     void remove_capture(bool white_takes, unsigned long long position);
@@ -43,6 +45,7 @@ class GameState {
     unsigned long long black_bishops;
     unsigned long long black_knights;
     unsigned long long black_pawns;
+
     Move prev_move;
 
     unsigned long long get_white_bitboard();

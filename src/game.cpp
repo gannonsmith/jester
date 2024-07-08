@@ -8,9 +8,10 @@ Game::Game() {
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "8/8/8/8/8/8/8/8";
+    //fen = "8/8/8/8/8/8/8/8";
     //std::cin >> fen;
     fen_setup(fen);
+    current_state.under_attack = current_state.generate_capture_spaces();
 
     std::cout << "Initial Setup:" << std::endl;
     print_board();
@@ -27,6 +28,8 @@ void Game::run() {
     current_state.get_states(game_states);
     std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
     print_bitboards(current_state.generate_capture_spaces());
+    print_bitboards(game_states[0][0].get_bitboard());
+    print_bitboards(game_states[0][0].under_attack);
     //print_moves();
     return;
     // END TESTING STUFF
@@ -243,4 +246,5 @@ void Game::print_bitboards(const unsigned long long bitboard) {
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }

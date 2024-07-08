@@ -430,7 +430,7 @@ unsigned long long GameState::generate_capture_spaces() {
                     if (file <= 7) {
                         captures |= mask_bit >> 9;
                     }
-                    captures |= mask_bit << 1;
+                    captures |= mask_bit >> 8;
                 }
                 if (rank <= 7) {
                     if (file >= 2) {
@@ -439,13 +439,13 @@ unsigned long long GameState::generate_capture_spaces() {
                     if (file <= 7) {
                         captures |= mask_bit << 7;
                     }
-                    captures |= mask_bit >> 1;
+                    captures |= mask_bit << 8;
                 }
                 if (file >= 2) {
-                    captures |= mask_bit >> 8;
+                    captures |= mask_bit << 1;
                 }
                 if (file <= 7) {
-                    captures |= mask_bit << 8;
+                    captures |= mask_bit >> 1;
                 }
             }
             mask_bit <<= 1;
@@ -497,19 +497,24 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 white_pawn_piece,
                                 false
                             };
+                        
                             state.white_queens |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.white_queens ^= jump_one;
 
                             state.white_rooks |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.white_rooks ^= jump_one;
 
                             state.white_bishops |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.white_rooks ^= jump_one;
 
                             state.white_bishops |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.white_knights ^= jump_one;
                         } else {
@@ -525,6 +530,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 white_pawn_piece,
                                 false
                             };
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                         }
                     }
@@ -545,6 +551,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 white_pawn_piece,
                                 false
                             };
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state); 
                         }
                     }
@@ -569,21 +576,25 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = state_template;
                                 state.white_queens |= take_left;
                                 state.remove_capture(true, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_rooks |= take_left;
                                 state.remove_capture(true, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_bishops |= take_left;
                                 state.remove_capture(true, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_bishops |= take_left;
                                 state.remove_capture(true, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
                             } else {
                                 GameState state = *this;
@@ -599,6 +610,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     white_pawn_piece,
                                     true
                                 };
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
                             } 
                         }
@@ -623,21 +635,25 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = state_template;
                                 state.white_queens |= take_right;
                                 state.remove_capture(true, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_rooks |= take_right;
                                 state.remove_capture(true, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_bishops |= take_right;
                                 state.remove_capture(true, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.white_bishops |= take_right;
                                 state.remove_capture(true, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
                             } else {
                                 GameState state = *this;
@@ -653,6 +669,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     white_pawn_piece,
                                     true
                                 };
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state); 
                             }
                         }
@@ -688,18 +705,22 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 false
                             };
                             state.black_queens |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.black_queens ^= jump_one;
 
                             state.black_rooks |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.black_rooks ^= jump_one;
 
                             state.black_bishops |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.black_bishops ^= jump_one;
 
                             state.black_knights |= jump_one;
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                             state.black_knights ^= jump_one;
                         } else {
@@ -715,6 +736,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 black_pawn_piece,
                                 false
                             };
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state);
                         }
                     }
@@ -735,6 +757,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 black_pawn_piece,
                                 false
                             };
+                            state.under_attack = state.generate_capture_spaces();
                             states_to_add.push_back(state); 
                         }
                     }
@@ -759,21 +782,25 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = state_template;
                                 state.black_queens |= take_left;
                                 state.remove_capture(false, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_rooks |= take_left;
                                 state.remove_capture(false, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_bishops |= take_left;
                                 state.remove_capture(false, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_knights |= take_left;
                                 state.remove_capture(false, take_left);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
                             } else {
                                 GameState state = *this;
@@ -789,6 +816,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     black_pawn_piece,
                                     true
                                 };
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state); 
                             }
                         }
@@ -813,21 +841,25 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = state_template;
                                 state.black_queens |= take_right;
                                 state.remove_capture(false, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_rooks |= take_right;
                                 state.remove_capture(false, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_bishops |= take_right;
                                 state.remove_capture(false, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
 
                                 state = state_template;
                                 state.black_knights |= take_right;
                                 state.remove_capture(false, take_right);
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state);
                             } else {
                                 GameState state = *this;
@@ -843,6 +875,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     black_pawn_piece,
                                     true
                                 };
+                                state.under_attack = state.generate_capture_spaces();
                                 states_to_add.push_back(state); 
                             }
                         }
@@ -907,6 +940,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -933,6 +967,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -959,6 +994,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -985,6 +1021,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -1011,6 +1048,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -1037,6 +1075,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -1063,6 +1102,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -1089,6 +1129,7 @@ void GameState::get_knight_moves(std::vector<GameState>& states) {
                             knight_piece,
                             ((jump & enemy_board) != 0)
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -1157,6 +1198,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1177,6 +1219,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1231,6 +1274,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1285,6 +1329,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1319,6 +1364,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1339,6 +1385,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             bishop_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1415,6 +1462,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1435,6 +1483,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1468,6 +1517,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1488,6 +1538,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1521,6 +1572,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1541,6 +1593,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1574,6 +1627,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1594,6 +1648,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             rook_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1668,6 +1723,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1688,6 +1744,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1721,6 +1778,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1741,6 +1799,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1774,6 +1833,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1794,6 +1854,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1827,6 +1888,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1847,6 +1909,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1880,6 +1943,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1900,6 +1964,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1934,6 +1999,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -1954,6 +2020,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -1988,6 +2055,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -2008,6 +2076,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -2042,6 +2111,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
@@ -2062,6 +2132,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             queen_piece,
                             true
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                         break;
                     } else if ((jump & friendly_board) != 0) {
@@ -2132,6 +2203,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2158,6 +2230,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2184,6 +2257,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2210,6 +2284,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2236,6 +2311,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2262,6 +2338,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2288,6 +2365,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
@@ -2314,6 +2392,7 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                             king_piece,
                             false
                         };
+                        state.under_attack = state.generate_capture_spaces();
                         states_to_add.push_back(state); 
                     }
                 }
