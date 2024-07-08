@@ -7,7 +7,7 @@ Game::Game() {
     current_state.set_empty();
 
     std::cout << "Enter starting FEN string:" << std::endl;
-    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    std::string fen = "8/8/8/8/1r3K2/8/4P3/8";
     //fen = "8/8/8/8/8/8/8/8";
     //std::cin >> fen;
     fen_setup(fen);
@@ -27,9 +27,9 @@ void Game::run() {
     //current_state.test_switch_turn();
     current_state.get_states(game_states);
     std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
-    print_bitboards(current_state.generate_capture_spaces());
-    print_bitboards(game_states[0][0].get_bitboard());
-    print_bitboards(game_states[0][0].under_attack);
+    //print_bitboards(current_state.generate_capture_spaces());
+    //print_bitboards(game_states[0][0].get_bitboard());
+    //print_bitboards(game_states[0][0].under_attack);
     //print_moves();
     return;
     // END TESTING STUFF

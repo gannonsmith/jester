@@ -15,6 +15,7 @@ class GameState {
 
     unsigned long long generate_capture_spaces();
     bool space_check(const unsigned long long position);
+    bool king_check();
 
     void get_pawn_moves(std::vector<GameState>& states);
     void get_knight_moves(std::vector<GameState>& states);

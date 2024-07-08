@@ -458,6 +458,15 @@ bool GameState::space_check(const unsigned long long position) {
     return (position & under_attack) != 0;
 }
 
+bool GameState::king_check() {
+
+    if (white_turn) {
+        return (white_kings & under_attack) != 0;
+    } else {
+        return (black_kings & under_attack) != 0;
+    }
+}
+
 void GameState::get_pawn_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
@@ -482,54 +491,60 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     // white pawn move one forward
                     unsigned long long jump_one = pawn << 8;
                     if ((jump_one & open_space) != 0) {
-                        // handle upgrading pawn
-                        if (rank == 7) {
-                            GameState state = *this;
-                            state.white_pawns ^= pawn;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+1, file},
-                                turn,
-                                white_pawn_piece,
-                                false
-                            };
-                        
-                            state.white_queens |= jump_one;
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state);
-                            state.white_queens ^= jump_one;
+                        GameState check_state = *this;
+                        check_state.white_pawns ^= pawn;
+                        check_state.white_pawns |= jump_one;
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            // handle upgrading pawn
+                            if (rank == 7) {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file},
+                                    turn,
+                                    white_pawn_piece,
+                                    false
+                                };
+                            
+                                state.white_queens |= jump_one;
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state);
+                                state.white_queens ^= jump_one;
 
-                            state.white_rooks |= jump_one;
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state);
-                            state.white_rooks ^= jump_one;
+                                state.white_rooks |= jump_one;
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state);
+                                state.white_rooks ^= jump_one;
 
-                            state.white_bishops |= jump_one;
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state);
-                            state.white_rooks ^= jump_one;
+                                state.white_bishops |= jump_one;
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state);
+                                state.white_rooks ^= jump_one;
 
-                            state.white_bishops |= jump_one;
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state);
-                            state.white_knights ^= jump_one;
-                        } else {
-                            GameState state = *this;
-                            state.white_pawns ^= pawn;
-                            state.white_pawns |= jump_one;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+1, file},
-                                turn,
-                                white_pawn_piece,
-                                false
-                            };
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state);
+                                state.white_bishops |= jump_one;
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state);
+                                state.white_knights ^= jump_one;
+                            } else {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_pawns |= jump_one;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+1, file},
+                                    turn,
+                                    white_pawn_piece,
+                                    false
+                                };
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state);
+                            }
                         }
                     }
 
@@ -537,20 +552,26 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                     if (rank == 2) {
                         unsigned long long jump_two = pawn << 16;
                         if (((jump_two | jump_one) & occupied_space) == 0) {
-                            GameState state = *this;
-                            state.white_pawns ^= pawn;
-                            state.white_pawns |= jump_two;
-                            state.white_turn = false;
-                            state.turn++;
-                            state.prev_move = {
-                                {rank, file},
-                                {rank+2, file},
-                                turn,
-                                white_pawn_piece,
-                                false
-                            };
-                            state.under_attack = state.generate_capture_spaces();
-                            states_to_add.push_back(state); 
+                            GameState check_state = *this;
+                            check_state.white_pawns ^= pawn;
+                            check_state.white_pawns |= jump_two;
+                            check_state.under_attack = check_state.generate_capture_spaces();
+                            if (!check_state.king_check()) {
+                                GameState state = *this;
+                                state.white_pawns ^= pawn;
+                                state.white_pawns |= jump_two;
+                                state.white_turn = false;
+                                state.turn++;
+                                state.prev_move = {
+                                    {rank, file},
+                                    {rank+2, file},
+                                    turn,
+                                    white_pawn_piece,
+                                    false
+                                };
+                                state.under_attack = state.generate_capture_spaces();
+                                states_to_add.push_back(state); 
+                            }
                         }
                     }
 
@@ -2183,26 +2204,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 8) {
                     unsigned long long jump = king << 8;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank+1, file},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state);
+                        } 
                     }
                 }
 
@@ -2210,26 +2242,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 8 && file != 8) {
                     unsigned long long jump = king << 7;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank+1, file+1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file+1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2237,26 +2280,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (file != 8) {
                     unsigned long long jump = king >> 1;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank, file+1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank, file+1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2264,26 +2318,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 1 && file != 8) {
                     unsigned long long jump = king >> 9;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank-1, file+1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file+1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2291,26 +2356,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 1) {
                     unsigned long long jump = king >> 8;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank-1, file},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2318,26 +2394,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 1 && file != 1) {
                     unsigned long long jump = king >> 7;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank-1, file-1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank-1, file-1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2345,26 +2432,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (file != 1) {
                     unsigned long long jump = king << 1;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank, file-1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank, file-1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
 
@@ -2372,26 +2470,37 @@ void GameState::get_king_moves(std::vector<GameState>& states) {
                 if (rank != 8 && file != 1) {
                     unsigned long long jump = king << 9;
                     if ((jump & friendly_board) == 0) {
-                        GameState state = *this;
+                        GameState check_state = *this;
                         if (white_turn) {
-                            state.white_kings ^= king;
-                            state.white_kings |= jump;
+                            check_state.white_kings ^= king;
+                            check_state.white_kings |= jump;
                         } else {
-                            state.black_kings ^= king;
-                            state.black_kings |= jump;
+                            check_state.black_kings ^= king;
+                            check_state.black_kings |= jump;
                         }
-                        state.remove_capture(white_turn, jump);
-                        state.white_turn = !white_turn;
-                        state.turn++;
-                        state.prev_move = {
-                            {rank, file},
-                            {rank+1, file-1},
-                            turn,
-                            king_piece,
-                            false
-                        };
-                        state.under_attack = state.generate_capture_spaces();
-                        states_to_add.push_back(state); 
+                        check_state.under_attack = check_state.generate_capture_spaces();
+                        if (!check_state.king_check()) {
+                            GameState state = *this;
+                            if (white_turn) {
+                                state.white_kings ^= king;
+                                state.white_kings |= jump;
+                            } else {
+                                state.black_kings ^= king;
+                                state.black_kings |= jump;
+                            }
+                            state.remove_capture(white_turn, jump);
+                            state.white_turn = !white_turn;
+                            state.turn++;
+                            state.prev_move = {
+                                {rank, file},
+                                {rank+1, file-1},
+                                turn,
+                                king_piece,
+                                false
+                            };
+                            state.under_attack = state.generate_capture_spaces();
+                            states_to_add.push_back(state); 
+                        }
                     }
                 }
             }
