@@ -1363,6 +1363,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             check_state.black_bishops ^= bishop;
                             check_state.black_bishops |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);  
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1440,6 +1441,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             check_state.black_bishops ^= bishop;
                             check_state.black_bishops |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1517,6 +1519,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             check_state.black_bishops ^= bishop;
                             check_state.black_bishops |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1595,6 +1598,7 @@ void GameState::get_bishop_moves(std::vector<GameState>& states) {
                             check_state.black_bishops ^= bishop;
                             check_state.black_bishops |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1715,6 +1719,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             check_state.black_rooks ^= rook;
                             check_state.black_rooks |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1792,6 +1797,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             check_state.black_rooks ^= rook;
                             check_state.black_rooks |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {   
                             GameState state = *this;
@@ -1869,6 +1875,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             check_state.black_rooks ^= rook;
                             check_state.black_rooks |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
@@ -1946,6 +1953,7 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
                             check_state.black_rooks ^= rook;
                             check_state.black_rooks |= jump;
                         }
+                        check_state.remove_capture(white_turn, jump);
                         check_state.under_attack = check_state.generate_capture_spaces();
                         if (!check_state.king_check()) {
                             GameState state = *this;
