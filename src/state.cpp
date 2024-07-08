@@ -92,6 +92,7 @@ void GameState::get_states(std::vector<std::vector<GameState>>& states) {
     get_knight_moves(states[0]);
     get_bishop_moves(states[0]);
     get_rook_moves(states[0]);
+    get_queen_moves(states[0]);
 }
 
 unsigned long long GameState::create_state(unsigned long long board, unsigned long long moving_piece, unsigned long long new_move) {
@@ -1283,41 +1284,41 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
 
     std::vector<GameState> states_to_add;
 
-    Piece rook_piece;
-    unsigned long long friendly_rooks;
+    Piece queen_piece;
+    unsigned long long friendly_queens;
     if (white_turn) {
-        rook_piece.set(Piece::PieceEncoding::WhiteRook);
-        friendly_rooks = white_rooks;
+        queen_piece.set(Piece::PieceEncoding::WhiteQueen);
+        friendly_queens = white_queens;
     } else {
-        rook_piece.set(Piece::PieceEncoding::BlackRook);
-        friendly_rooks = black_rooks;
+        queen_piece.set(Piece::PieceEncoding::BlackQueen);
+        friendly_queens = black_queens;
     }
 
     for (int rank = 1; rank <= 8; rank++) {
         for (int file = 8; file >= 1; file--) {
 
-            const unsigned long long rook = mask_bit & friendly_rooks;
+            const unsigned long long queen = mask_bit & friendly_queens;
 
-            if (rook != 0) {
-                //rook exists
+            if (queen != 0) {
+                //queen exists
                 unsigned long long jump;
                 Square slider;
 
                 // up
                 slider.rank = rank+1;
                 slider.file = file;
-                jump = rook;
+                jump = queen;
                 while (slider.rank <= 8) {
                     jump <<= 8;
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.white_turn = !white_turn;
                         state.turn++;
@@ -1325,18 +1326,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             false
                         };
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
@@ -1345,7 +1346,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             true
                         };
                         states_to_add.push_back(state); 
@@ -1359,18 +1360,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                 // right
                 slider.rank = rank;
                 slider.file = file+1;
-                jump = rook;
+                jump = queen;
                 while (slider.file <= 8) {
                     jump >>= 1;
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.white_turn = !white_turn;
                         state.turn++;
@@ -1378,18 +1379,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             false
                         };
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
@@ -1398,7 +1399,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             true
                         };
                         states_to_add.push_back(state); 
@@ -1412,18 +1413,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                 // down
                 slider.rank = rank-1;
                 slider.file = file;
-                jump = rook;
+                jump = queen;
                 while (slider.rank >= 1) {
                     jump >>= 8;
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.white_turn = !white_turn;
                         state.turn++;
@@ -1431,18 +1432,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             false
                         };
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
@@ -1451,7 +1452,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             true
                         };
                         states_to_add.push_back(state); 
@@ -1465,18 +1466,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                 // left
                 slider.rank = rank;
                 slider.file = file-1;
-                jump = rook;
+                jump = queen;
                 while (slider.file >= 1) {
                     jump <<= 1;
 
                     if ((jump & open_space) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.white_turn = !white_turn;
                         state.turn++;
@@ -1484,18 +1485,18 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             false
                         };
                         states_to_add.push_back(state); 
                     } else if ((jump & enemy_board) != 0) {
                         GameState state = *this;
                         if (white_turn) {
-                            state.white_rooks ^= rook;
-                            state.white_rooks |= jump;
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
                         } else {
-                            state.black_rooks ^= rook;
-                            state.black_rooks |= jump;
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
                         }
                         state.remove_capture(white_turn, jump);
                         state.white_turn = !white_turn;
@@ -1504,7 +1505,7 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                             {rank, file},
                             {slider.rank, slider.file},
                             turn,
-                            rook_piece,
+                            queen_piece,
                             true
                         };
                         states_to_add.push_back(state); 
@@ -1512,9 +1513,224 @@ void GameState::get_queen_moves(std::vector<GameState>& states) {
                     } else if ((jump & friendly_board) != 0) {
                         break;
                     }
+                    slider.file--;  
+                }
+
+                // top right
+                slider.rank = rank+1;
+                slider.file = file+1;
+                jump = queen;
+                while (slider.rank <= 8 && slider.file <= 8) {
+                    jump <<= 7;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file++;
+                }
+
+                // bottom right
+                slider.rank = rank-1;
+                slider.file = file+1;
+                jump = queen;
+                while (slider.rank >= 1 && slider.file <= 8) {
+                    jump >>= 9;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank--;
+                    slider.file++;
+                }
+
+                // bottom left
+                slider.rank = rank-1;
+                slider.file = file-1;
+                jump = queen;
+                while (slider.rank >= 1 && slider.file >= 1) {
+                    jump >>= 7;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank--;
                     slider.file--;
                 }
 
+                // top left
+                slider.rank = rank+1;
+                slider.file = file-1;
+                jump = queen;
+                while (slider.rank <= 8 && slider.file >= 1) {
+                    jump <<= 9;
+
+                    if ((jump & open_space) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            false
+                        };
+                        states_to_add.push_back(state); 
+                    } else if ((jump & enemy_board) != 0) {
+                        GameState state = *this;
+                        if (white_turn) {
+                            state.white_queens ^= queen;
+                            state.white_queens |= jump;
+                        } else {
+                            state.black_queens ^= queen;
+                            state.black_queens |= jump;
+                        }
+                        state.remove_capture(white_turn, jump);
+                        state.white_turn = !white_turn;
+                        state.turn++;
+                        state.prev_move = {
+                            {rank, file},
+                            {slider.rank, slider.file},
+                            turn,
+                            queen_piece,
+                            true
+                        };
+                        states_to_add.push_back(state); 
+                        break;
+                    } else if ((jump & friendly_board) != 0) {
+                        break;
+                    }
+                    slider.rank++;
+                    slider.file--;
+                }
             }
             mask_bit <<= 1;
         }
