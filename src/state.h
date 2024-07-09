@@ -14,6 +14,9 @@ class GameState {
     void remove_capture(bool white_takes, unsigned long long position);
 
     unsigned long long generate_capture_spaces();
+    /*
+    Returns true if position is under attack
+    */
     bool space_check(const unsigned long long position);
     bool king_check();
 
@@ -23,6 +26,7 @@ class GameState {
     void get_rook_moves(std::vector<GameState>& states);
     void get_queen_moves(std::vector<GameState>& states);
     void get_king_moves(std::vector<GameState>& states);
+    void get_castle_moves(std::vector<GameState>& states);
     
     void set(Piece& p, Square& s);
     void set_empty();
@@ -48,6 +52,10 @@ class GameState {
     unsigned long long black_pawns;
 
     Move prev_move;
+    bool white_castle_right;
+    bool white_castle_left;
+    bool black_castle_right;
+    bool black_castle_left;
 
     unsigned long long get_white_bitboard();
     unsigned long long get_black_bitboard();
