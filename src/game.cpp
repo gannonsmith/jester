@@ -7,8 +7,8 @@ Game::Game() {
     current_state.set_empty();
 
     std::cout << "Enter starting FEN string:" << std::endl;
-    std::string fen = "1r4K1/1r3Q2/8/8/8/8/8/8";
-    fen = "8/8/8/8/8/8/8/R3K2R";
+    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    //fen = "r2pk1pr/8/8/8/8/8/8/8";
     //std::cin >> fen;
     fen_setup(fen);
     current_state.under_attack = current_state.generate_capture_spaces();
@@ -25,8 +25,10 @@ Game::Game() {
 void Game::run() {
     // TESTING STUFF
     //current_state.test_switch_turn();
-    current_state.get_states(game_states);
-    std::cout << "Total moves: " << game_states[0].size() << std::endl << std::endl;
+    current_state.get_states(game_states, 2);
+    for (auto s: game_states) {
+        std::cout << "Total moves: " << s.size() << std::endl << std::endl;
+    }
     //print_bitboards(current_state.generate_capture_spaces());
     //print_bitboards(game_states[0][0].get_bitboard());
     //print_bitboards(game_states[0][0].under_attack);
@@ -185,6 +187,8 @@ void Game::fen_setup(std::string& fen_string) {
         
         file++;
     }
+    game_states.push_back({});
+    game_states[0].push_back(current_state);
 }
 
 void Game::print_board() {

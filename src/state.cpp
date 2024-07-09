@@ -2,6 +2,7 @@
 
 void GameState::test_switch_turn() {
     white_turn = !white_turn;
+    under_attack = generate_capture_spaces();
 }
 
 unsigned long long GameState::get_bitboard() {
@@ -88,21 +89,26 @@ void GameState::set_empty() {
     black_bishops = 0;
     black_knights = 0;
     black_pawns = 0;
+    under_attack = 0;
     white_castle_left = true;
     white_castle_right = true;
     black_castle_left = true;
     black_castle_right = true;
 }
 
-void GameState::get_states(std::vector<std::vector<GameState>>& states) {
-    states.push_back({});
-    get_pawn_moves(states[0]);
-    get_knight_moves(states[0]);
-    get_bishop_moves(states[0]);
-    get_rook_moves(states[0]);
-    get_queen_moves(states[0]);
-    get_king_moves(states[0]);
-    get_castle_moves(states[0]);
+void GameState::get_states(std::vector<std::vector<GameState>>& states, int depth) {
+    for (int i = 0; i < depth; i++) {
+        states.push_back({});
+        for (auto s: states[i]) {
+            s.get_pawn_moves(states[i+1]);
+            s.get_knight_moves(states[i+1]);
+            s.get_bishop_moves(states[i+1]);
+            s.get_rook_moves(states[i+1]);
+            s.get_queen_moves(states[i+1]);
+            s.get_king_moves(states[i+1]);
+            s.get_castle_moves(states[i+1]);
+        }
+    }
 }
 
 unsigned long long GameState::create_state(unsigned long long board, unsigned long long moving_piece, unsigned long long new_move) {
@@ -3029,7 +3035,6 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
     const unsigned long long a1 = 0x80;
     const unsigned long long e1 = 0x8;
     const unsigned long long h1 = 0x1;
-
     
     const unsigned long long a8 = 0x8000000000000000;
     const unsigned long long e8 = 0x800000000000000;
@@ -3099,22 +3104,22 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
             if ((between & occupied_space) == 0 && !space_check(e8) && !space_check(f8) && !space_check(g8)) {
                 //can castle right
                 GameState state = *this;
-                state.white_kings ^= e8;
-                state.white_kings |= g8;
-                state.white_rooks ^= h8;
-                state.white_rooks |= e8;
+                state.black_kings ^= e8;
+                state.black_kings |= g8;
+                state.black_rooks ^= h8;
+                state.black_rooks |= e8;
                 
-                state.white_turn = false;
+                state.white_turn = true;
                 state.turn++;
                 state.prev_move = {
-                    {1, 5},
-                    {1, 7},
+                    {8, 5},
+                    {8, 7},
                     turn,
                     king_piece,
                     false
                 };
-                state.white_castle_right = false;
-                state.white_castle_left = false;
+                state.black_castle_right = false;
+                state.black_castle_left = false;
                 state.under_attack = state.generate_capture_spaces();
                 states_to_add.push_back(state); 
             }
@@ -3127,22 +3132,22 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
             if ((between & occupied_space) == 0 && !space_check(b8) && !space_check(c8) && !space_check(d8) && !space_check(e8)) {
                 //can castle right
                 GameState state = *this;
-                state.white_kings ^= e8;
-                state.white_kings |= c8;
-                state.white_rooks ^= a8;
-                state.white_rooks |= d8;
+                state.black_kings ^= e8;
+                state.black_kings |= c8;
+                state.black_rooks ^= a8;
+                state.black_rooks |= d8;
                 
-                state.white_turn = false;
+                state.white_turn = true;
                 state.turn++;
                 state.prev_move = {
-                    {1, 5},
-                    {1, 3},
+                    {8, 5},
+                    {8, 3},
                     turn,
                     king_piece,
                     false
                 };
-                state.white_castle_right = false;
-                state.white_castle_left = false;
+                state.black_castle_right = false;
+                state.black_castle_left = false;
                 state.under_attack = state.generate_capture_spaces();
                 states_to_add.push_back(state); 
             }
