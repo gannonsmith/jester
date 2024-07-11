@@ -29,6 +29,7 @@ void Game::run() {
     for (auto s: game_states) {
         std::cout << "Total moves: " << s.size() << std::endl << std::endl;
     }
+    
     //print_bitboards(current_state.generate_capture_spaces());
     //print_bitboards(game_states[0][0].get_bitboard());
     //print_bitboards(game_states[0][0].under_attack);
