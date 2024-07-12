@@ -57,6 +57,7 @@ class GameState {
     bool black_castle_right;
     bool black_castle_left;
 
+    public:
     unsigned long long get_white_bitboard();
     unsigned long long get_black_bitboard();
 };

@@ -489,6 +489,8 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
     std::vector<GameState> states_to_add;
 
     if (white_turn) {
+        std::cout << "here" << std::endl;
+        
         Piece white_pawn_piece;
         white_pawn_piece.set(Piece::PieceEncoding::WhitePawn);
 

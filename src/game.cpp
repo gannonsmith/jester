@@ -5,6 +5,7 @@ Game::Game() {
 
     max_depth = 5;
     current_state.set_empty();
+    //current_state.test_switch_turn();
 
     std::cout << "Enter starting FEN string:" << std::endl;
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
@@ -24,12 +25,17 @@ Game::Game() {
 
 void Game::run() {
     // TESTING STUFF
-    //current_state.test_switch_turn();
+
     current_state.get_states(game_states, 2);
     for (auto s: game_states) {
         std::cout << "Total moves: " << s.size() << std::endl << std::endl;
     }
-    
+
+    std::cout << game_states[2].size() << std::endl;
+    for (auto s: game_states[2]) {
+        print_bitboards(s.get_bitboard());
+    }
+
     //print_bitboards(current_state.generate_capture_spaces());
     //print_bitboards(game_states[0][0].get_bitboard());
     //print_bitboards(game_states[0][0].under_attack);
