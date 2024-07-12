@@ -510,7 +510,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                             if (rank == 7) {
                                 GameState state = *this;
                                 state.white_pawns ^= pawn;
-                                state.white_turn = false;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -543,7 +543,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = *this;
                                 state.white_pawns ^= pawn;
                                 state.white_pawns |= jump_one;
-                                state.white_turn = false;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -570,7 +570,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = *this;
                                 state.white_pawns ^= pawn;
                                 state.white_pawns |= jump_two;
-                                state.white_turn = false;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -597,7 +597,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 if (rank == 7) {
                                     GameState state_template = *this;
                                     state_template.white_pawns ^= pawn;
-                                    state_template.white_turn = false;
+                                    state_template.white_turn = !white_turn;
                                     state_template.turn++;
                                     state_template.prev_move = {
                                         {rank, file},
@@ -635,7 +635,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     state.white_pawns ^= pawn;
                                     state.white_pawns |= take_left;
                                     state.remove_capture(true, take_left);
-                                    state.white_turn = false;
+                                    state.white_turn = !white_turn;
                                     state.turn++;
                                     state.prev_move = {
                                         {rank, file},
@@ -663,7 +663,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 if (rank == 7) {
                                     GameState state_template = *this;
                                     state_template.white_pawns ^= pawn;
-                                    state_template.white_turn = false;
+                                    state_template.white_turn = !white_turn;
                                     state_template.turn++;
                                     state_template.prev_move = {
                                         {rank, file},
@@ -700,7 +700,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     state.white_pawns ^= pawn;
                                     state.white_pawns |= take_right;
                                     state.remove_capture(true, take_right);
-                                    state.white_turn = false;
+                                    state.white_turn = !white_turn;
                                     state.turn++;
                                     state.prev_move = {
                                         {rank, file},
@@ -741,7 +741,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                             if (rank == 2) {
                                 GameState state = *this;
                                 state.black_pawns ^= pawn;
-                                state.white_turn = true;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -773,7 +773,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = *this;
                                 state.black_pawns ^= pawn;
                                 state.black_pawns |= jump_one;
-                                state.white_turn = true;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -800,7 +800,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 GameState state = *this;
                                 state.black_pawns ^= pawn;
                                 state.black_pawns |= jump_two;
-                                state.white_turn = true;
+                                state.white_turn = !white_turn;
                                 state.turn++;
                                 state.prev_move = {
                                     {rank, file},
@@ -827,7 +827,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 if (rank == 2) {
                                     GameState state_template = *this;
                                     state_template.black_pawns ^= pawn;
-                                    state_template.white_turn = true;
+                                    state_template.white_turn = !white_turn;
                                     state_template.turn++;
                                     state_template.prev_move = {
                                         {rank, file},
@@ -865,7 +865,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     state.black_pawns ^= pawn;
                                     state.black_pawns |= take_left;
                                     state.remove_capture(false, take_left);
-                                    state.white_turn = true;
+                                    state.white_turn = !white_turn;
                                     state.turn++;
                                     state.prev_move = {
                                         {rank, file},
@@ -893,7 +893,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                 if (rank == 2) {
                                     GameState state_template = *this;
                                     state_template.black_pawns ^= pawn;
-                                    state_template.white_turn = true;
+                                    state_template.white_turn = !white_turn;
                                     state_template.turn++;
                                     state_template.prev_move = {
                                         {rank, file},
@@ -930,7 +930,7 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
                                     state.black_pawns ^= pawn;
                                     state.black_pawns |= take_right;
                                     state.remove_capture(false, take_right);
-                                    state.white_turn = true;
+                                    state.white_turn = !white_turn;
                                     state.turn++;
                                     state.prev_move = {
                                         {rank, file},
@@ -3053,7 +3053,7 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
                 state.white_rooks ^= h1;
                 state.white_rooks |= e1;
                 
-                state.white_turn = false;
+                state.white_turn = !white_turn;
                 state.turn++;
                 state.prev_move = {
                     {1, 5},
@@ -3081,7 +3081,7 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
                 state.white_rooks ^= a1;
                 state.white_rooks |= d1;
                 
-                state.white_turn = false;
+                state.white_turn = !white_turn;
                 state.turn++;
                 state.prev_move = {
                     {1, 5},
@@ -3109,7 +3109,7 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
                 state.black_rooks ^= h8;
                 state.black_rooks |= e8;
                 
-                state.white_turn = true;
+                state.white_turn = !white_turn;
                 state.turn++;
                 state.prev_move = {
                     {8, 5},
@@ -3137,7 +3137,7 @@ void GameState::get_castle_moves(std::vector<GameState>& states) {
                 state.black_rooks ^= a8;
                 state.black_rooks |= d8;
                 
-                state.white_turn = true;
+                state.white_turn = !white_turn;
                 state.turn++;
                 state.prev_move = {
                     {8, 5},
