@@ -722,6 +722,10 @@ void GameState::get_pawn_moves(std::vector<GameState>& states) {
             }
         }
     } else {
+        //TESTING 
+        std::cout << "black pawn move" << std::endl;
+
+        //
         Piece black_pawn_piece;
         black_pawn_piece.set(Piece::PieceEncoding::BlackPawn);
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "helper.h"
 #include "piece.h"
-#include "state.h"
+#include "state/state.h"
 
 class Game {
     public:

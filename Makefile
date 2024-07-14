@@ -3,7 +3,7 @@ appname := chess
 CXX := g++
 CXXFLAGS := -Wall -g
 
-srcfiles := $(shell find . -maxdepth 2 -name "*.cpp")
+srcfiles := $(shell find . -maxdepth 3 -name "*.cpp")
 objects  := $(patsubst %.cpp, %.o, $(srcfiles))
 
 all: $(appname)

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "piece.h"
-#include "helper.h"
+#include "../piece.h"
+#include "../helper.h"
 
 class GameState {
     public:
