@@ -111,12 +111,6 @@ void GameState::get_states(std::vector<std::vector<GameState>>& states, int dept
     }
 }
 
-unsigned long long GameState::create_state(unsigned long long board, unsigned long long moving_piece, unsigned long long new_move) {
-    board ^= moving_piece;
-    board |= new_move;
-    return board;
-}
-
 void GameState::remove_capture(bool white_takes, unsigned long long position) {
     if (white_takes) {
         black_kings ^= position;
@@ -475,4 +469,12 @@ bool GameState::king_check() {
     } else {
         return (black_kings & under_attack) != 0;
     }
+}
+
+const unsigned long long GameState::get_friendly_board() {
+    return white_turn ? get_white_bitboard() : get_black_bitboard();
+}
+
+const unsigned long long GameState::get_enemy_board() {
+    return white_turn ? get_black_bitboard() : get_white_bitboard();
 }

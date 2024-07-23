@@ -7,17 +7,34 @@
 class GameState {
     public:
 
+    /*
+    bitboard showing which spaces are currently under "check" by the opponent
+    */
     unsigned long long under_attack;
 
+    /*
+    generates all board states to the depth given
+    */
     void get_states(std::vector<std::vector<GameState>>& states, int depth);
-    static unsigned long long create_state(unsigned long long old_board, unsigned long long moving_piece, unsigned long long new_move);
+
+    /*
+    removes piece from enemy board at position
+    */
     void remove_capture(bool white_takes, unsigned long long position);
 
-    unsigned long long generate_capture_spaces();
     /*
-    Returns true if position is under attack
+    regenerates the "under_attack" variable
+    */
+    unsigned long long generate_capture_spaces();
+
+    /*
+    Returns true if sqaure at position is under attack, false otherwise
     */
     bool space_check(const unsigned long long position);
+
+    /*
+    Returns true if the king is in check, false otherwise
+    */
     bool king_check();
 
     void get_pawn_moves(std::vector<GameState>& states);
@@ -35,6 +52,9 @@ class GameState {
     void test_switch_turn();
 
     private:
+
+    const unsigned long long get_friendly_board();
+    const unsigned long long get_enemy_board();
 
     bool white_turn;
     int turn;

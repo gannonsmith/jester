@@ -5,9 +5,9 @@ void GameState::get_rook_moves(std::vector<GameState>& states) {
     const unsigned long long occupied_space = get_bitboard();
     const unsigned long long open_space = ~occupied_space;
 
-    const unsigned long long friendly_board = white_turn ? get_white_bitboard() : get_black_bitboard();
-    const unsigned long long enemy_board = white_turn ? get_black_bitboard() : get_white_bitboard();
-
+    const unsigned long long enemy_board = get_enemy_board();
+    const unsigned long long friendly_board = get_friendly_board();
+    
     unsigned long long mask_bit = 0x1;
 
     std::vector<GameState> states_to_add;
