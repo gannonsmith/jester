@@ -39,7 +39,7 @@ void Game::run() {
     print_bitboards(current_state.generate_capture_spaces());
     print_bitboards(game_states[0][0].get_bitboard());
     print_bitboards(game_states[0][0].under_attack);
-    print_moves();
+    //print_moves();
     return;
     // END TESTING STUFF
 
