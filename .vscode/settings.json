@@ -45,6 +45,9 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "ctime": "cpp",
+        "map": "cpp",
+        "fstream": "cpp"
     }
 }

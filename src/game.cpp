@@ -1,261 +1,152 @@
+#include <SFML/Graphics.hpp>
+#include <time.h>
 #include <iostream>
-#include "game.h"
 
-Game::Game() {
+#include "board.h"
+using namespace sf;
 
-    max_depth = 5;
-    current_state.set_empty();
-    //current_state.test_switch_turn();
+const int icon_size = 133;
+const int padding = 14;
+const int size = icon_size + padding;
 
-    std::cout << "Enter starting FEN string:" << std::endl;
-    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    //fen = "r2pk1pr/8/8/8/8/8/8/8";
-    //std::cin >> fen;
-    fen_setup(fen);
-    current_state.under_attack = current_state.generate_capture_spaces();
-
-    std::cout << "Initial Setup:" << std::endl;
-    print_board();
-
-    print_bitboards(current_state.get_bitboard());
-    //std::cout << std::endl << "breakpoint" << std::endl;
-
-    std::cout << "Moves should be printed in long algebraic notation." << std::endl;
-}
-
-void Game::run() {
-    // TESTING STUFF
-
-    current_state.get_states(game_states, 2);
-    for (auto s: game_states) {
-        std::cout << "Total moves: " << s.size() << std::endl << std::endl;
-    }
-
-    std::cout << game_states[2].size() << std::endl;
-    for (auto s: game_states[2]) {
-        print_bitboards(s.get_bitboard());
-    }
-
-    print_bitboards(current_state.generate_capture_spaces());
-    print_bitboards(game_states[0][0].get_bitboard());
-    print_bitboards(game_states[0][0].under_attack);
-    //print_moves();
-    return;
-    // END TESTING STUFF
-
-    std::cout << "game running" << std::endl;
-
-    std::vector<std::vector<Piece>> board(8, std::vector<Piece>(8));
-    std::string move;
-    //bool valid_move;
-
-    int count = 0;
-    while (count == 0) {
-        
-        Move white_move;
-        bool end = get_move(white_move, true);
-        if (end) {
-            std::cout << "Ending game" << std::endl;
-            return;
-        }
-
-        Move black_move;
-        end = get_move(black_move, false);
-        if (end) {
-            std::cout << "Ending game" << std::endl;
-            return;
-        }
-
-        count++;
-    }
-}
-
-bool Game::get_move(Move& move, bool white_to_move) {
-    std::string move_str;
-
-    bool valid_move = false;
-    while (!valid_move) {
-        if (white_to_move) {
-            std::cout << "White to move" << std::endl << "Answer 'q' to exit" << std::endl;
-        } else {
-            std::cout << "Black to move" << std::endl << "Answer 'q' to exit" << std::endl;
-        }
-        print_board();
-
-        std::cin >> move_str;
-        if (move_str == "q") {
-            return false;
-        }
-        valid_move = str_to_move(move, move_str, white_to_move);
-    }
-
-    if (white_to_move) {
-        std::cout << "White does move: " << move_str << std::endl;
-    } else {
-        std::cout << "Black does move: " << move_str << std::endl;
-    }
-
-    return true;
-}
-
-
-bool Game::str_to_move(Move& move, std::string& move_str, bool white_to_move) {
-    if (move_str.size() != 6) {
-        std::cout << "move string is invalid length" << std::endl;
-        return false;
-    }
-
-    Piece piece;
-    if (!valid_piece(piece, move_str[0], white_to_move)) {
-        std::cout << "piece character is invalid" << std::endl;
-        return false;
-    }
-
-    Square start_square;
-    Square end_square;
-    if (!valid_square(start_square, move_str[2], move_str[1]) ||
-        !valid_square(end_square, move_str[5], move_str[4])) 
-    {
-        std::cout << "invalid square" << std::endl;
-        return false;
-    }
-
-    bool capture;
-    if (move_str[3] != '-' && move_str[3] != 'x') {
-        std::cout << "capture not specified" << std::endl;
-        return false;
-    }
-    capture = move_str[3] == 'x';
-
-    move.start = start_square;
-    move.end = end_square;
-    move.depth = 1;
-    move.piece = piece;
-    move.capture = capture;
-
-    // TODO
-    if (false) {
-        std::cout << "cannot move there" << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-
-bool Game::valid_piece(Piece& piece, char piece_c, bool white) {
-    if (white && 
-        (piece_c == 'K' || piece_c == 'Q' || piece_c == 'R' || piece_c == 'B' || 
-        piece_c == 'N' || piece_c == 'P')) 
-    {
-        piece = Piece::get(piece_c);
-        return true;
-    } else if (!white && 
-        (piece_c == 'k' || piece_c == 'q' || piece_c == 'r' || piece_c == 'b' || 
-        piece_c == 'n' || piece_c == 'p'))
-    {
-        piece = Piece::get(piece_c);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool Game::valid_square(Square& square, char rank, char file) {
-    if (rank < '1' || rank > '8' || file < 'a' || 'h' < file) {
-        return false;
-    }
-    square.rank = rank - '1' + 1;
-    square.file = file - 'a' + 1;
-    return true;
-}
-
-void Game::get_moves(bool white_to_move, int depth) {
-    return;
+const std::string starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     
+
+
+Sprite f[32]; // figures
+
+Board board;
+
+
+std::string toChessNote(Vector2f p)
+{
+    std::string s = "";
+    s += char(p.x/size+97);
+    s += char(7-p.y/size+49);
+    return s;
 }
 
-void Game::fen_setup(std::string& fen_string) {
-    int rank = 8;
-    int file = 1;
-    for (char c: fen_string) {
-        if (c == '/') {
-            rank--;
-            file = 1;
-            continue;
+Vector2f toCoord(char a, char b)
+{
+    int x = int(a) - 97;
+    int y = 7 - int(b) + 49;
+    return Vector2f(x*size,y*size);
+}
+
+void move(std::string str)
+{
+    Vector2f oldPos = toCoord(str[0],str[1]);
+    Vector2f newPos = toCoord(str[2],str[3]);
+
+    for (int i = 0; i < 32; i++) {
+        if (f[i].getPosition() == newPos) {
+            f[i].setPosition(-100,-100);
         }
-        if ('0' <= c && c <= '9') {
-            file += c - '0';
-            continue;
-        }
-        Piece piece = Piece::get(c);
-        Square square{rank, file};
-        set_square(piece, square);
-        
-        file++;
     }
-    game_states.push_back({});
-    game_states[0].push_back(current_state);
+
+    for (int i = 0; i < 32; i++) {
+        if (f[i].getPosition() == oldPos) {
+            f[i].setPosition(newPos);
+        }
+    }
 }
 
-void Game::print_board() {
-    std::cout << std::endl;
-    int h_length = 8;
+void loadPosition()
+{
+    int k = 0;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            int n = board[i*8 + j];
+            if (!n) {
+                continue;
+            }
+            int x = (n & 7) - 1;
+            int y = (n & Piece::White) != 0 ? 1 : 0; 
+            f[k].setTextureRect( IntRect(icon_size*x,icon_size*y,icon_size,icon_size) );
+            f[k].setPosition(size*j,size*i);
+            k++;
+        }
+    }
+}
 
-    std::cout << "   ";
-    for (int i = 0; i < h_length; i++) {
-        std::cout << " \u23AF\u23AF\u23AF";
-    } 
-    std::cout << std::endl;
-    for (int i = 7; i >= 0; i--) {
-        std::cout << i+1 << "  |";
-        for (int j = 7; j >= 0; j--) {
-            std::string piece_str = board[(i)*8 + j].get_display();
-            if (piece_str == ".") {
-                if ((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)) {
-                    std::cout << " \u25A0 ";
-                } else {
-                    std::cout << " \u25A1 ";
+
+int main()
+{
+    board.initialize_with_fen(starting_fen);
+
+    RenderWindow window(VideoMode(1168, 1166), "The Chess!");
+
+    Texture t1,t2;
+    t1.loadFromFile("images/figures.png");
+    t2.loadFromFile("images/board.png");
+
+    Sprite s(t1);
+    Sprite sBoard(t2);
+
+    for (int i = 0; i < 32; i++) {
+        f[i].setTexture(t1);
+    }
+
+    loadPosition();
+
+    bool isMove = false;
+    float dx=0, dy=0;
+    Vector2f oldPos,newPos;
+    std::string str;
+    int n=0;
+
+    while (window.isOpen())
+    {
+        Vector2i pos = Mouse::getPosition(window);
+
+        Event e;
+        while (window.pollEvent(e))
+        {
+            if (e.type == Event::Closed) {
+                window.close();
+            }
+
+            // drag and drop
+            if (e.type == Event::MouseButtonPressed) {
+                if (e.key.code == Mouse::Left) {
+                    for (int i = 0 ; i < 32; i++) {
+                        if (f[i].getGlobalBounds().contains(pos.x, pos.y)) {
+                            isMove = true;
+                            n = i;
+                            dx = pos.x - f[i].getPosition().x;
+                            dy = pos.y - f[i].getPosition().y;
+                            oldPos = f[i].getPosition();
+                        }
+                    }
                 }
-                std::cout << "\uFFE8";
-            } else {
-                std::cout << " " << piece_str << " \uFFE8";
+            }
+
+            if (e.type == Event::MouseButtonReleased) {
+                if (e.key.code == Mouse::Left) {
+                    isMove = false;
+                    Vector2f p = f[n].getPosition() + Vector2f(size/2,size/2);
+                    Vector2f newPos = Vector2f( size*int(p.x/size), size*int(p.y/size) );
+                    str = toChessNote(oldPos) + toChessNote(newPos);
+                    move(str);
+                    std::cout << str << std::endl;
+                    f[n].setPosition(newPos);
+                }
             }
         }
-        std::cout << std::endl;
-        std::cout << "   ";
-        for (int i = 0; i < h_length; i++) {
-            std::cout << " \u23AF\u23AF\u23AF";
-        } 
-        std::cout << std::endl;
-    }
-    std::cout << "  ";
-    for (char c = 'a'; c < 'i'; c++) {
-        std::cout << "   " << c;
-    }
-    std::cout << std::endl;
-}
 
-
-void Game::set_square(Piece piece, Square& square) {
-    board[(square.rank-1)*8 + 8-square.file] = piece;
-    current_state.set(piece, square);
-}
-
-
-void Game::print_bitboards(const unsigned long long bitboard) {
-    unsigned long long bit = 1;
-    bit <<= 63;
-    for (int rank = 8; rank >= 1; rank--) {
-        for (int file = 1; file <= 8; file++) {
-            if ((bit & bitboard) == 0) {
-                std::cout << 0;
-            } else {
-                std::cout << 1;
-            }
-            bit >>= 1;
+        if (isMove) {
+            f[n].setPosition(pos.x-dx, pos.y-dy);
         }
-        std::cout << std::endl;
+        
+        // draw
+        window.clear();
+        window.draw(sBoard);
+        for (int i = 0; i < 32; i++) {
+            window.draw(f[i]);
+        }
+        window.display();
     }
-    std::cout << std::endl;
+    
+    
+    return 0;
 }

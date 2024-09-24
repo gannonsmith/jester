@@ -1,57 +1,34 @@
-#pragma once
-
-#include <string>
 
 class Piece {
-
     public:
+    static bool isColor(int piece, int color) {
+        if (piece | None == 0) {
+            return false;
+        } else {
+            if (color == White) {
+                return piece & White;
+            } else {
+                return piece & Black;
+            }
+        }
+    }
 
-    enum PieceEncoding {
-        King = 0b00100000,
-        Queen = 0b00010000,
-        Rook = 0b00001000,
-        Bishop = 0b00000100,
-        Knight = 0b00000010,
-        Pawn = 0b00000001,
-        White = 0b10000000,
-        WhiteKing = 0b10100000,
-        WhiteQueen = 0b10010000,
-        WhiteRook = 0b10001000,
-        WhiteBishop = 0b10000100,
-        WhiteKnight = 0b10000010,
-        WhitePawn = 0b10000001,
-        Black = 0b01000000,
-        BlackKing = 0b01100000,
-        BlackQueen = 0b01010000,
-        BlackRook = 0b01001000,
-        BlackBishop = 0b01000100,
-        BlackKnight = 0b01000010,
-        BlackPawn = 0b01000001,
-        Empty = 0b00000000
-    };
+    static bool isSlidingPiece (int piece) {
+        return (piece & Queen) | (piece & Rook) | (piece & Bishop);
+    }
 
-    friend std::ostream& operator<<(std::ostream& os, Piece const & p) {
-        std::string s = p.get_display();
-        return os << s;
-    };
+    static bool isType (int piece, int t) {
+        return piece & t;
+    }
 
-    static Piece get(char c);
-    PieceEncoding get();
-    void set(PieceEncoding p);
-    std::string get_display() const;
+    static const int None = 0;
+    static const int King = 1;
+    static const int Queen = 2;
+    static const int Knight = 3;
+    static const int Bishop = 4;
+    static const int Rook = 5;
+    static const int Pawn = 6;
 
-    bool empty();
-
-    // returns 0 if false, if true then some number
-    int white();
-    int black();
-    int king();
-    int queen();
-    int rook();
-    int bishop();
-    int knight();
-    int pawn();
-
-    private:
-    PieceEncoding piece_encoding;
+    static const int White = 8;
+    static const int Black = 16;
 };
