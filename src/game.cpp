@@ -10,7 +10,7 @@ const int squareSize = 100;
 float scaleFactor = static_cast<float>(squareSize) / 133; // 100 / 133 ≈ 0.7519
 sf::Color lightColor(240, 217, 181); // Light Beige
 sf::Color darkColor(181, 136, 99);   // Soft Brown
-sf::Color highlightColor(255, 250, 130, 128); //reddish transparent
+sf::Color highlightColor(255, 250, 100, 128); //reddish transparent
 
 // highlighted squares
 int highlights[64] = 
@@ -151,6 +151,7 @@ int main()
                             dx = pos.x - f[i].getPosition().x;
                             dy = pos.y - f[i].getPosition().y;
                             oldPos = f[i].getPosition();
+                            highlight(oldPos);
                         }
                     }
                 }
