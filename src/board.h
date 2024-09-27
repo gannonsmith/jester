@@ -20,9 +20,10 @@ public:
 
     void initialize_with_fen(const std::string& fen);
 
-    std::vector<Move> generate_moves();
+    // clears move list and generates moves
+    void generate_moves(std::vector<Move>& moves);
 
-    void generate_sliding_moves(int start_square, int piece);
+    void generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece);
 
     int& operator [](int idx) {
         return squares[idx];

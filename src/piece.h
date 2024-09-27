@@ -3,18 +3,19 @@
 class Piece {
     public:
     static bool isColor(int piece, int color) {
-        if (piece | None == 0) {
-            return false;
-        } else {
+        //std::cout << "in color" << std::endl;
+        if (piece) {
             if (color == White) {
                 return piece & White;
             } else {
                 return piece & Black;
             }
         }
+        return false;
     }
 
     static bool isSlidingPiece (int piece) {
+        //std::cout << "in sliding" << std::endl;
         return (piece & Queen) | (piece & Rook) | (piece & Bishop);
     }
 

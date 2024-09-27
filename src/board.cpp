@@ -30,26 +30,26 @@ void Board::initialize_with_fen(const std::string& fen)
     }
 
     color_to_move = Piece::White;
+    friendly_color = Piece::White;
+    opponent_color = Piece::Black;
 }
 
-std::vector<Move> Board::generate_moves()
+void Board::generate_moves(std::vector<Move>& moves)
 {
-    std::vector<Move> moves;
-
+    moves.clear();
     for (int start_square = 0; start_square < 64; start_square++) {
         int piece = squares[start_square];
         if (Piece::isColor(piece, color_to_move)) {
             if (Piece::isSlidingPiece(piece)) {
-                generate_sliding_moves(start_square, piece);
+                generate_sliding_moves(moves, start_square, piece);
             }
         }
     }
-
-    return moves;
 }
 
-void Board::generate_sliding_moves(int start_square, int piece)
+void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece)
 {
+    std::cout << "here" << std::endl;
     int start_dir_index = (Piece::isType(piece, Piece::Bishop)) ? 4 : 0;
     int end_dir_index = (Piece::isType(piece, Piece::Rook)) ? 4 : 8;
 
@@ -64,6 +64,7 @@ void Board::generate_sliding_moves(int start_square, int piece)
                 break;
             }
 
+            std::cout << "generated move" << std::endl;
             moves.push_back({start_square, target_square});
 
             // blocked by enemy piece

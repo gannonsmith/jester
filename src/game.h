@@ -30,4 +30,5 @@ public:
 
 private:
     Board board;
+    std::vector<Move> moves;
 };

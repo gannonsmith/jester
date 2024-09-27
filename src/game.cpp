@@ -79,7 +79,8 @@ void highlight(int square_idx) {
 }
 
 void Game::generate() {
-    std::vector<Move> moves = board.generate_moves();
+    board.generate_moves(moves);
+    std::cout << moves.size() << std::endl;
     for (Move move: moves) {
         highlight(move.start_square);
         highlight(move.target_square);
@@ -96,9 +97,8 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
     if (old_idx != new_idx) {
         board[new_idx] = board[old_idx];
         board[old_idx] = Piece::None;
-
-        load_position();
     }
+    load_position();
 
     highlight(to_index(oldPos));
     highlight(to_index(newPos));
@@ -118,6 +118,7 @@ void Game::load_position()
             f.back().setPosition(size*j,size*i);
         }
     }
+    generate();
 }
 
 void Game::preload_figure_template(sf::Texture& t)
@@ -174,7 +175,7 @@ void Game::render()
                             dy = pos.y - f[i].getPosition().y;
                             oldPos = f[i].getPosition();
 
-                            //clear_highlights();
+                            clear_highlights();
                             highlight(to_index(oldPos));
                         }
                     }
@@ -189,10 +190,11 @@ void Game::render()
 
                     f[active_figure_idx].setPosition(newPos);
 
-                    str = toChessNote(oldPos) + toChessNote(newPos);
-                    move(oldPos, newPos);
-                    std::cout << str << std::endl;
-
+                    if (oldPos != newPos) {
+                        str = toChessNote(oldPos) + toChessNote(newPos);
+                        move(oldPos, newPos);
+                        std::cout << str << std::endl;
+                    }
                 }
             }
         }

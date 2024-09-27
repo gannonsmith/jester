@@ -13,7 +13,7 @@ int main()
     game.init(starting_fen);
     game.render();
 
-    std::cout << "here" << std::endl;
+    std::cout << "Ending game" << std::endl;
     
     
     
