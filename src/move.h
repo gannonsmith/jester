@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 
 // PRECOMPUTED MOVE DATA

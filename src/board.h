@@ -3,6 +3,8 @@
 #include <map>
 #include <cctype>
 #include <string>
+#include <vector>
+#include <iostream>
 
 #include "piece.h"
 #include "move.h"
@@ -16,41 +18,13 @@ public:
     // constructor to initialize board with "None"s
     Board() : squares(size * size, 0) {}
 
-    void initialize_with_fen(const std::string& fen) {
-        std::map<char, int> piece_type_from_symbol = {
-            {'k', Piece::King},
-            {'p', Piece::Pawn},
-            {'n', Piece::Knight},
-            {'b', Piece::Bishop},
-            {'r', Piece::Rook},
-            {'q', Piece::Queen}
-        };
-
-        int file=0, rank=7;
-        for (char c: fen) {
-            if (c == '/') {
-                file = 0;
-                rank--;
-            } else {
-                if (isdigit(c)) {
-                    file += int(c);
-                } else {
-                    int color = isupper(c) ? Piece::White : Piece::Black;
-                    int type = piece_type_from_symbol[tolower(c)];
-                    squares[rank * 8 + file] = type | color;
-                    file++;
-                }
-            }
-        }
-
-        color_to_move = Piece::White;
-    }
+    void initialize_with_fen(const std::string& fen);
 
     std::vector<Move> generate_moves();
 
     void generate_sliding_moves(int start_square, int piece);
 
-    int operator [](int idx) {
+    int& operator [](int idx) {
         return squares[idx];
     }
 private:

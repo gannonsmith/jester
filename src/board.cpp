@@ -1,7 +1,39 @@
 #include <vector>
 #include "board.h"
 
-std::vector<Move> Board::generate_moves() {
+void Board::initialize_with_fen(const std::string& fen)
+{
+    std::map<char, int> piece_type_from_symbol = {
+        {'k', Piece::King},
+        {'p', Piece::Pawn},
+        {'n', Piece::Knight},
+        {'b', Piece::Bishop},
+        {'r', Piece::Rook},
+        {'q', Piece::Queen}
+    };
+
+    int file=0, rank=7;
+    for (char c: fen) {
+        if (c == '/') {
+            file = 0;
+            rank--;
+        } else {
+            if (isdigit(c)) {
+                file += c - '0';
+            } else {
+                int color = isupper(c) ? Piece::White : Piece::Black;
+                int type = piece_type_from_symbol[tolower(c)];
+                squares[rank * 8 + file] = type | color;
+                file++;
+            }
+        }
+    }
+
+    color_to_move = Piece::White;
+}
+
+std::vector<Move> Board::generate_moves()
+{
     std::vector<Move> moves;
 
     for (int start_square = 0; start_square < 64; start_square++) {
@@ -16,7 +48,8 @@ std::vector<Move> Board::generate_moves() {
     return moves;
 }
 
-void Board::generate_sliding_moves(int start_square, int piece) {
+void Board::generate_sliding_moves(int start_square, int piece)
+{
     int start_dir_index = (Piece::isType(piece, Piece::Bishop)) ? 4 : 0;
     int end_dir_index = (Piece::isType(piece, Piece::Rook)) ? 4 : 8;
 
