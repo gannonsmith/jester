@@ -93,19 +93,12 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
     int old_idx = to_index(oldPos);
     int new_idx = to_index(newPos);
 
-    /*
-    for (int i = 0; i < 32; i++) {
-        if (f[i].getPosition() == newPos) {
-            f[i].setPosition(-100,-100);
-        }
+    if (old_idx != new_idx) {
+        board[new_idx] = board[old_idx];
+        board[old_idx] = Piece::None;
+
+        load_position();
     }
-    */
-
-    
-    board[new_idx] = board[old_idx];
-    board[old_idx] = Piece::None;
-
-    load_position();
 
     highlight(to_index(oldPos));
     highlight(to_index(newPos));
@@ -189,7 +182,7 @@ void Game::render()
             }
 
             if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.key.code == sf::Mouse::Left) {
+                if (event.key.code == sf::Mouse::Left && isMove) {
                     isMove = false;
                     sf::Vector2f p = f[active_figure_idx].getPosition() + sf::Vector2f(size/2,size/2);
                     sf::Vector2f newPos = sf::Vector2f( size*int(p.x/size), size*int(p.y/size) );
