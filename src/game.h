@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -32,3 +33,5 @@ private:
     Board board;
     std::vector<Move> moves;
 };
+
+#endif

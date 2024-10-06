@@ -53,6 +53,14 @@ void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, i
     int start_dir_index = (Piece::isType(piece, Piece::Bishop)) ? 4 : 0;
     int end_dir_index = (Piece::isType(piece, Piece::Rook)) ? 4 : 8;
 
+    for (int i = 0; i < 64; i++) {
+        std::cout << "{";
+        for (int j = 0; j < 8; j++) {
+            std::cout << NUM_SQUARES_TO_EDGE[i][j] << ",";
+        }
+        std::cout << "}" << std::endl;
+    }
+
     for (int direction_index = start_dir_index; direction_index < end_dir_index; direction_index++) {
         for (int n = 0; n < NUM_SQUARES_TO_EDGE[start_square][direction_index]; n++) {
 

@@ -1,10 +1,11 @@
-#pragma once
+#ifndef PIECE_H
+#define PIECE_H
 
 class Piece {
     public:
-    static bool isColor(int piece, int color) {
-        //std::cout << "in color" << std::endl;
+    static int isColor(int piece, int color) {
         if (piece) {
+            //std::cout << "in piece:" << piece << std::endl;
             if (color == White) {
                 return piece & White;
             } else {
@@ -14,12 +15,12 @@ class Piece {
         return false;
     }
 
-    static bool isSlidingPiece (int piece) {
+    static int isSlidingPiece (int piece) {
         //std::cout << "in sliding" << std::endl;
         return (piece & Queen) | (piece & Rook) | (piece & Bishop);
     }
 
-    static bool isType (int piece, int t) {
+    static int isType (int piece, int t) {
         return piece & t;
     }
 
@@ -34,3 +35,5 @@ class Piece {
     static const int White = 8;
     static const int Black = 16;
 };
+
+#endif

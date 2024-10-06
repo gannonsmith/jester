@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOARD_H
+#define BOARD_H
 
 #include <map>
 #include <cctype>
@@ -35,3 +36,5 @@ private:
     int friendly_color;
     int opponent_color;
 };
+
+#endif
