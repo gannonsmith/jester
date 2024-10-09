@@ -25,6 +25,7 @@ public:
     void generate_moves(std::vector<Move>& moves);
 
     void generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece);
+    
 
     int& operator [](int idx) {
         return squares[idx];

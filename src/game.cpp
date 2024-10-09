@@ -9,6 +9,7 @@ float scaleFactor = static_cast<float>(squareSize) / 133; // 100 / 133 ≈ 0.751
 sf::Color lightColor(240, 217, 181); // Light Beige
 sf::Color darkColor(181, 136, 99);   // Soft Brown
 sf::Color highlightColor(255, 250, 100, 128); //reddish transparent
+sf::Color selectedColor(255, 0, 0, 128); // redder transparent
 
 std::map<int, int> piece_to_figure_idx = {
     { Piece::Black | Piece::King,   0 },
@@ -102,14 +103,6 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
     int new_idx = to_index(newPos);
 
     if (old_idx == new_idx) {
-        int square = old_idx;
-        if (selected_square == square) {
-            selected_square = -1;
-            highlight(square);
-        } else {
-            selected_square = square;
-            highlight_moves(square);
-        }
         return;
     }
 
@@ -195,7 +188,10 @@ void Game::render()
                             oldPos = f[i].getPosition();
 
                             clear_highlights();
-                            highlight(to_index(oldPos));
+
+                            int old_idx = to_index(oldPos);
+                            selected_square = old_idx;
+                            highlight_moves(old_idx);
                         }
                     }
                 }
@@ -208,6 +204,7 @@ void Game::render()
                     sf::Vector2f newPos = sf::Vector2f( size*int(p.x/size), size*int(p.y/size) );
 
                     f[active_figure_idx].setPosition(newPos);
+                    selected_square = -1;
 
                     move(oldPos, newPos);
                 }
@@ -236,7 +233,12 @@ void Game::render()
             // draw squares
             window.draw(square);
 
-            if (highlights[i]) {
+            if (i == selected_square) {
+                sf::RectangleShape highlight(sf::Vector2f(squareSize, squareSize));
+                highlight.setFillColor(selectedColor);
+                highlight.setPosition(col * squareSize, row * squareSize); 
+                window.draw(highlight);
+            } else if (highlights[i]) {
                 sf::RectangleShape highlight(sf::Vector2f(squareSize, squareSize));
                 highlight.setFillColor(highlightColor);
                 highlight.setPosition(col * squareSize, row * squareSize); 
