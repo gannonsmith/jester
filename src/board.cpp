@@ -49,10 +49,10 @@ void Board::generate_moves(std::vector<Move>& moves)
 
 void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece)
 {
-    std::cout << "here" << std::endl;
     int start_dir_index = (Piece::isType(piece, Piece::Bishop)) ? 4 : 0;
     int end_dir_index = (Piece::isType(piece, Piece::Rook)) ? 4 : 8;
 
+    /*
     for (int i = 0; i < 64; i++) {
         std::cout << "{";
         for (int j = 0; j < 8; j++) {
@@ -60,6 +60,7 @@ void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, i
         }
         std::cout << "}" << std::endl;
     }
+    */
 
     for (int direction_index = start_dir_index; direction_index < end_dir_index; direction_index++) {
         for (int n = 0; n < NUM_SQUARES_TO_EDGE[start_square][direction_index]; n++) {
@@ -72,7 +73,7 @@ void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, i
                 break;
             }
 
-            std::cout << "generated move" << std::endl;
+            //std::cout << "generated move" << std::endl;
             moves.push_back({start_square, target_square});
 
             // blocked by enemy piece

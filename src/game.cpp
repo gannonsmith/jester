@@ -37,6 +37,8 @@ int highlights[64] =
      0,0,0,0,0,0,0,0,
      0,0,0,0,0,0,0,0};
 
+int selected_square = -1;
+
 sf::Sprite f_template[12]; // figure template
 std::vector<sf::Sprite> f; // figures
 
@@ -78,26 +80,44 @@ void highlight(int square_idx) {
     highlights[square_idx] = 1;
 }
 
+void Game::highlight_moves(int start_square) {
+    for (Move move: moves) {
+        if (move.start_square == start_square) {
+            highlight(move.start_square);
+            highlight(move.target_square);
+        }
+    }
+}
+
 void Game::generate() {
     board.generate_moves(moves);
     std::cout << moves.size() << std::endl;
-    for (Move move: moves) {
-        highlight(move.start_square);
-        highlight(move.target_square);
-    }
 }
 
 void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
 {
     clear_highlights();
-
+    
     int old_idx = to_index(oldPos);
     int new_idx = to_index(newPos);
 
-    if (old_idx != new_idx) {
-        board[new_idx] = board[old_idx];
-        board[old_idx] = Piece::None;
+    if (old_idx == new_idx) {
+        int square = old_idx;
+        if (selected_square == square) {
+            selected_square = -1;
+            highlight(square);
+        } else {
+            selected_square = square;
+            highlight_moves(square);
+        }
+        return;
     }
+
+    std::string str = toChessNote(oldPos) + toChessNote(newPos);
+    std::cout << str << std::endl;
+
+    board[new_idx] = board[old_idx];
+    board[old_idx] = Piece::None;
     load_position();
 
     highlight(to_index(oldPos));
@@ -147,7 +167,6 @@ void Game::render()
     bool isMove = false;
     float dx=0, dy=0;
     sf::Vector2f oldPos,newPos;
-    std::string str;
     int active_figure_idx = 0;
     
 
@@ -190,11 +209,7 @@ void Game::render()
 
                     f[active_figure_idx].setPosition(newPos);
 
-                    if (oldPos != newPos) {
-                        str = toChessNote(oldPos) + toChessNote(newPos);
-                        move(oldPos, newPos);
-                        std::cout << str << std::endl;
-                    }
+                    move(oldPos, newPos);
                 }
             }
         }

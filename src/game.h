@@ -26,6 +26,7 @@ public:
 
     void move(sf::Vector2f oldPos, sf::Vector2f newPos);
 
+    void highlight_moves(int start_square);
     void generate();
 
 
