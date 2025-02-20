@@ -10,7 +10,6 @@
 #include "piece.h"
 #include "move.h"
 
-
 class Board {
 public:
     // board dimensions
@@ -19,12 +18,31 @@ public:
     // constructor to initialize board with "None"s
     Board() : squares(size * size, 0) {}
 
+    Board(Board& t) {
+        squares = t.squares;
+        color_to_move = t.color_to_move;
+    }
+
+    Board(Board& t, int start_square, int target_square) {
+        squares = t.squares;
+        squares[target_square] = squares[start_square];
+        squares[start_square] = Piece::None;
+        color_to_move = Piece::flipColor(t.color_to_move);
+    }
+
     void initialize_with_fen(const std::string& fen);
 
-    // clears move list and generates moves
-    void generate_moves(std::vector<Move>& moves);
+    std::vector<Move>* get_moves() {
+        return &moves;
+    }
 
-    void generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece);
+    void push_move(int start_square, int target_square);
+
+    // clears move list and generates moves
+    void generate_moves();
+
+    void generate_sliding_moves(int start_square, int piece);
+    void generate_knight_moves(int start_square, int piece);
     
 
     int& operator [](int idx) {
@@ -34,8 +52,8 @@ private:
     std::vector<int> squares; // 1D array for board representation
     std::vector<Move> moves;
     int color_to_move;
-    int friendly_color;
-    int opponent_color;
+    //int friendly_color;
+    //int opponent_color;
 };
 
 #endif

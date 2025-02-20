@@ -15,6 +15,11 @@ public:
         precomputed_move_data();
     }
 
+    ~Game() {
+        // deconstruct board
+        // moves is already deconstructed
+    }
+
     void init(const std::string& fen) {
         board.initialize_with_fen(fen);
     }
@@ -32,7 +37,7 @@ public:
 
 private:
     Board board;
-    std::vector<Move> moves;
+    std::vector<Move>* moves;
 };
 
 #endif

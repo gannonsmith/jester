@@ -3,9 +3,14 @@
 
 class Piece {
     public:
+
     static bool isColor(int piece, int color) {
         int piece_color = piece & Color;
         return piece_color == color;
+    }
+
+    static int flipColor(int color) {
+        return White & color ? Black : White;
     }
 
     static bool isSlidingPiece (int piece) {

@@ -8,8 +8,8 @@ const int squareSize = 100;
 float scaleFactor = static_cast<float>(squareSize) / 133; // 100 / 133 ≈ 0.7519
 sf::Color lightColor(240, 217, 181); // Light Beige
 sf::Color darkColor(181, 136, 99);   // Soft Brown
-sf::Color highlightColor(255, 250, 100, 128); //reddish transparent
-sf::Color selectedColor(255, 0, 0, 128); // redder transparent
+sf::Color highlightColor(255, 165, 0, 128); //orangish transparent
+sf::Color selectedColor(255, 0, 0, 128); // reddish transparent
 
 std::map<int, int> piece_to_figure_idx = {
     { Piece::Black | Piece::King,   0 },
@@ -82,7 +82,7 @@ void highlight(int square_idx) {
 }
 
 void Game::highlight_moves(int start_square) {
-    for (Move move: moves) {
+    for (Move move: *moves) {
         if (move.start_square == start_square) {
             highlight(move.start_square);
             highlight(move.target_square);
@@ -91,8 +91,9 @@ void Game::highlight_moves(int start_square) {
 }
 
 void Game::generate() {
-    board.generate_moves(moves);
-    std::cout << moves.size() << std::endl;
+    board.generate_moves();
+    moves = board.get_moves();
+    std::cout << moves->size() << std::endl;
 }
 
 void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
@@ -191,6 +192,10 @@ void Game::render()
 
                             int old_idx = to_index(oldPos);
                             selected_square = old_idx;
+                            //tmp
+                            {
+                                std::cout << selected_square << std::endl;
+                            }
                             highlight_moves(old_idx);
                         }
                     }
@@ -203,6 +208,7 @@ void Game::render()
                     sf::Vector2f p = f[active_figure_idx].getPosition() + sf::Vector2f(size/2,size/2);
                     sf::Vector2f newPos = sf::Vector2f( size*int(p.x/size), size*int(p.y/size) );
 
+                    // TODO: determine it is an actual move
                     f[active_figure_idx].setPosition(newPos);
                     selected_square = -1;
 

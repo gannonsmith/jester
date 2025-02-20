@@ -30,37 +30,38 @@ void Board::initialize_with_fen(const std::string& fen)
     }
 
     color_to_move = Piece::White;
-    friendly_color = Piece::White;
-    opponent_color = Piece::Black;
+    //friendly_color = Piece::White;
+    //opponent_color = Piece::Black;
 }
 
-void Board::generate_moves(std::vector<Move>& moves)
+
+void Board::push_move(int start_square, int target_square) {
+    moves.emplace_back(start_square, target_square);
+    Board* new_board = moves.back().resulting_board;
+    new_board = new Board(*this, start_square, target_square);
+}
+
+
+void Board::generate_moves()
 {
     moves.clear();
     for (int start_square = 0; start_square < 64; start_square++) {
         int piece = squares[start_square];
-        if (Piece::isColor(piece, color_to_move)) {
-            if (Piece::isSlidingPiece(piece)) {
-                generate_sliding_moves(moves, start_square, piece);
-            }
+        if (Piece::isSlidingPiece(piece)) {
+            generate_sliding_moves(start_square, piece);
+        }
+        if (Piece::isType(piece, Piece::Knight)) {
+            generate_knight_moves(start_square, piece);
         }
     }
 }
 
-void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, int piece)
+void Board::generate_sliding_moves(int start_square, int piece)
 {
     int start_dir_index = (Piece::isType(piece, Piece::Bishop)) ? 4 : 0;
     int end_dir_index = (Piece::isType(piece, Piece::Rook)) ? 4 : 8;
-
-    /*
-    for (int i = 0; i < 64; i++) {
-        std::cout << "{";
-        for (int j = 0; j < 8; j++) {
-            std::cout << NUM_SQUARES_TO_EDGE[i][j] << ",";
-        }
-        std::cout << "}" << std::endl;
-    }
-    */
+    int piece_color = piece & Piece::Color;
+    int opponent_color = Piece::flipColor(piece_color);
 
     for (int direction_index = start_dir_index; direction_index < end_dir_index; direction_index++) {
         for (int n = 0; n < NUM_SQUARES_TO_EDGE[start_square][direction_index]; n++) {
@@ -69,17 +70,35 @@ void Board::generate_sliding_moves(std::vector<Move>& moves, int start_square, i
             int piece_on_target_square = squares[target_square];
 
             // blocked by friendly piece
-            if (Piece::isColor(piece_on_target_square, friendly_color)) {
+            if (Piece::isColor(piece_on_target_square, piece_color)) {
                 break;
             }
 
             //std::cout << "generated move" << std::endl;
-            moves.push_back({start_square, target_square});
+            push_move(start_square, target_square);
 
             // blocked by enemy piece
             if (Piece::isColor(piece_on_target_square, opponent_color)) {
                 break;
             }
+        }
+    }
+}
+
+
+void Board::generate_knight_moves(int start_square, int piece) {
+    int piece_color = piece & Piece::Color;
+
+    // TODO make this more efficient
+    for (int target_square = 0; target_square < 64; target_square++) {
+        if (KNIGHT_MOVES[start_square][target_square]) {
+
+            // blocked by friendly piece
+            if (Piece::isColor(squares[target_square], piece_color)) {
+                break;
+            }
+
+            push_move(start_square, target_square);
         }
     }
 }
