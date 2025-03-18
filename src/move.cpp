@@ -27,9 +27,10 @@ void precomputed_move_data () {
 
             // Knight Precomputation
             bool knight_offsets[8] = { true, true, true, true, true, true, true, true }; 
+            //   KNIGHT_OFFSETS[8] = { -6, -10, -17, -15, 6, 10, 15, 17 };
 
-            int square_index_mod = square_index % 8;
-            int square_index_div = square_index / 8;
+            int square_index_mod = square_index % 8; // 1
+            int square_index_div = square_index / 8; // 5
             
             if (square_index_mod == 7) {
                 knight_offsets[0] = false;
@@ -43,14 +44,14 @@ void precomputed_move_data () {
             }
             if (square_index_mod == 0) {
                 // don't do 6, 15, -10, -17
-                knight_offsets[0] = false;
+                knight_offsets[1] = false;
                 knight_offsets[2] = false;
                 knight_offsets[4] = false;
                 knight_offsets[6] = false;
             }
             if (square_index_mod == 1) {
                 // don't do 6 or -10
-                knight_offsets[2] = false;
+                knight_offsets[1] = false;
                 knight_offsets[4] = false;
             }
             if (square_index_div == 0) {
@@ -62,8 +63,8 @@ void precomputed_move_data () {
             }
             if (square_index_div == 1) {
                 // don't do -15 or -17
-                knight_offsets[0] = false;
-                knight_offsets[1] = false;
+                knight_offsets[2] = false;
+                knight_offsets[3] = false;
             }
             if (square_index_div == 7) {
                 // don't do 6, 10, 15, or 17

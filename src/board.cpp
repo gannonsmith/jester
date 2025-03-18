@@ -95,7 +95,7 @@ void Board::generate_knight_moves(int start_square, int piece) {
 
             // blocked by friendly piece
             if (Piece::isColor(squares[target_square], piece_color)) {
-                break;
+                continue;
             }
 
             push_move(start_square, target_square);
