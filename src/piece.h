@@ -4,24 +4,28 @@
 class Piece {
     public:
 
-    static bool isColor(int piece, int color) {
-        int piece_color = piece & Color;
+    static bool isColor(unsigned int piece, unsigned int color) {
+        unsigned int piece_color = piece & Color;
         return piece_color == color;
     }
 
-    static int flipColor(int color) {
+    static unsigned int flipColor(unsigned int color) {
         return White & color ? Black : White;
     }
 
-    static bool isSlidingPiece (int piece) {
+    static bool isSlidingPiece (unsigned int piece) {
         //std::cout << "in sliding" << std::endl;
         unsigned int type = piece & Type;
         return (type == Queen) || (type == Rook) || (type == Bishop);
     }
 
-    static bool isType (int piece, int t) {
+    static bool isType (unsigned int piece, unsigned int t) {
         unsigned int type = piece & Type;
         return type == t;
+    }
+
+    static bool isPiece (unsigned int piece) {
+        return piece != None;
     }
 
     static const unsigned int None = 0;

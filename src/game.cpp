@@ -1,5 +1,3 @@
-
-
 #include "game.h"
 
 const int icon_size = 133;
@@ -91,8 +89,8 @@ void Game::highlight_moves(int start_square) {
 }
 
 void Game::generate() {
-    board.generate_moves();
-    moves = board.get_moves();
+    board->generate_moves();
+    moves = board->get_moves();
     std::cout << moves->size() << std::endl;
 }
 
@@ -109,9 +107,18 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
 
     std::string str = toChessNote(oldPos) + toChessNote(newPos);
     std::cout << str << std::endl;
-
-    board[new_idx] = board[old_idx];
-    board[old_idx] = Piece::None;
+    if (moves == nullptr) {
+        return;
+    }
+    
+    for (Move move: *moves) {
+        if (move.start_square == old_idx && move.target_square == new_idx) {
+            // TODO: handle pawn promotions*
+            board = move.resulting_board;
+            break;
+        }
+    }
+    
     load_position();
 
     highlight(to_index(oldPos));
@@ -123,7 +130,7 @@ void Game::load_position()
     f.clear();
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            int n = board[i*8 + j];
+            int n = (*board)[i*8 + j];
             if (n == Piece::None) {
                 continue;
             }

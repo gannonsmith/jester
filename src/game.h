@@ -21,7 +21,8 @@ public:
     }
 
     void init(const std::string& fen) {
-        board.initialize_with_fen(fen);
+        board = new Board();
+        board->initialize_with_fen(fen);
     }
 
     void preload_figure_template(sf::Texture& t);
@@ -36,7 +37,7 @@ public:
 
 
 private:
-    Board board;
+    Board* board;
     std::vector<Move>* moves;
 };
 

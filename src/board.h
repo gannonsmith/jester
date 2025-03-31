@@ -41,17 +41,18 @@ public:
     // clears move list and generates moves
     void generate_moves();
 
-    void generate_sliding_moves(int start_square, int piece);
-    void generate_knight_moves(int start_square, int piece);
+    void generate_pawn_moves(int start_square, unsigned int piece);
+    void generate_sliding_moves(int start_square, unsigned int piece);
+    void generate_knight_moves(int start_square, unsigned int piece);
     
 
-    int& operator [](int idx) {
+    unsigned int& operator [](int idx) {
         return squares[idx];
     }
 private:
-    std::vector<int> squares; // 1D array for board representation
+    std::vector<unsigned int> squares; // 1D array for board representation
     std::vector<Move> moves;
-    int color_to_move;
+    unsigned int color_to_move;
     //int friendly_color;
     //int opponent_color;
 };
