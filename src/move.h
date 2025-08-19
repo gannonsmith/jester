@@ -2,6 +2,7 @@
 #define MOVE_H
 
 #include <algorithm>
+#include "piece.h"
 
 class Board;
 
@@ -40,13 +41,23 @@ public:
 
     Move(int start_square, int target_square): 
         start_square(start_square), 
-        target_square(target_square)
+        target_square(target_square),
+        promotion_piece(Piece::None)
+    {
+        //
+    }
+
+    Move(int start_square, int target_square, unsigned int promotion_piece): 
+        start_square(start_square), 
+        target_square(target_square),
+        promotion_piece(promotion_piece)
     {
         //
     }
 
     const int start_square;
     const int target_square;
+    const unsigned int promotion_piece = Piece::None; // for pawn promotions
     Board* resulting_board;
 };
 

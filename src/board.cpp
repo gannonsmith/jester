@@ -52,8 +52,9 @@ void Board::push_move(int start_square, int target_square) {
 }
 
 void Board::push_move(int start_square, int target_square, unsigned int piece) {
-    moves.emplace_back(start_square, target_square);
-    moves.back().resulting_board = new Board(*this, start_square, target_square);
+    std::cout << "Pushing move with promotion: " << start_square << " to " << target_square << " with piece " << piece << std::endl;
+    moves.emplace_back(start_square, target_square, piece);
+    moves.back().resulting_board = new Board(*this, start_square, target_square, piece);
 }
 
 void Board::generate_moves()
@@ -214,12 +215,14 @@ void Board::generate_pawn_promotion(int start_square, int target_square, unsigne
     assert(squares[start_square] == piece);
     assert((target_square / 8) == 0 || (target_square / 8) == 7);
 
+    std::cout << "Generating pawn promotion from " << start_square << " to " << target_square << std::endl;
+
     if (Piece::isColor(piece, Piece::White)) {
         push_move(start_square, target_square, Piece::Queen | Piece::White);
         push_move(start_square, target_square, Piece::Rook | Piece::White);
         push_move(start_square, target_square, Piece::Bishop | Piece::White);
         push_move(start_square, target_square, Piece::Knight | Piece::White);
-    } else {
+    } else if (Piece::isColor(piece, Piece::Black)) {
         push_move(start_square, target_square, Piece::Queen | Piece::Black);
         push_move(start_square, target_square, Piece::Rook | Piece::Black);
         push_move(start_square, target_square, Piece::Bishop | Piece::Black);

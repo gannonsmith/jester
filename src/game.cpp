@@ -117,8 +117,17 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
     } else {
         for (Move move: *moves) {
             if (move.start_square == old_idx && move.target_square == new_idx) {
-                // TODO: handle pawn promotions*
-                board = move.resulting_board;
+                if (move.promotion_piece != Piece::None) {
+                    // TODO: let user choose promotion piece
+                    unsigned int chosen_promotion = Piece::Queen | Piece::White; // for example
+                    if (move.promotion_piece == chosen_promotion) {
+                        board = move.resulting_board;
+                    } else {
+                        continue;
+                    }
+                } else {
+                    board = move.resulting_board;
+                }
                 break;
             }
         }
