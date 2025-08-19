@@ -30,6 +30,14 @@ public:
         color_to_move = Piece::flipColor(t.color_to_move);
     }
 
+    // constructor for move with promotion
+    Board(Board& t, int start_square, int target_square, unsigned int piece) {
+        squares = t.squares;
+        squares[target_square] = piece;
+        squares[start_square] = Piece::None;
+        color_to_move = Piece::flipColor(t.color_to_move);
+    }
+
     void initialize_with_fen(const std::string& fen);
 
     std::vector<Move>* get_moves() {
@@ -38,11 +46,15 @@ public:
 
     void push_move(int start_square, int target_square);
 
+    // push move with promotion (pawns only)
+    void push_move(int start_square, int target_square, unsigned int piece);
+
     // clears move list and generates moves
     void generate_moves();
 
     void generate_white_pawn_moves(int start_square, unsigned int piece);
     void generate_black_pawn_moves(int start_square, unsigned int piece);
+    void generate_pawn_promotion(int start_square, int target_square, unsigned int piece);
     void generate_sliding_moves(int start_square, unsigned int piece);
     void generate_knight_moves(int start_square, unsigned int piece);
     

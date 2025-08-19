@@ -1,4 +1,5 @@
 #include <vector>
+#include <cassert>
 #include "board.h"
 
 void Board::initialize_with_fen(const std::string& fen)
@@ -42,18 +43,18 @@ void Board::initialize_with_fen(const std::string& fen)
         std::cerr << "Invalid FEN: " << fen << std::endl;
         return;
     }
-    //friendly_color = Piece::White;
-    //opponent_color = Piece::Black;
 }
 
 
 void Board::push_move(int start_square, int target_square) {
     moves.emplace_back(start_square, target_square);
-    //Board* new_board = moves.back().resulting_board;
-    //new_board = new Board(*this, start_square, target_square);
     moves.back().resulting_board = new Board(*this, start_square, target_square);
 }
 
+void Board::push_move(int start_square, int target_square, unsigned int piece) {
+    moves.emplace_back(start_square, target_square);
+    moves.back().resulting_board = new Board(*this, start_square, target_square);
+}
 
 void Board::generate_moves()
 {
@@ -81,21 +82,24 @@ void Board::generate_moves()
 
 void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
 {
-    if ((start_square / 8) == 0) {
-        return;
-    }
+    assert(Piece::isColor(piece, Piece::White));
+    assert(Piece::isType(piece, Piece::Pawn));
+    assert(start_square >= 0 && start_square < 64);
+    assert(squares[start_square] == piece);
+    assert((start_square / 8) >= 1 && (start_square / 8) <= 6);
 
-    // TODO: pawn promotion
-    if ((start_square / 8) == 1) {
-        return;
-    }
+    bool promotion_move = (start_square / 8) == 1;
 
     // diagonal right
     int target_square = start_square - 7;
     unsigned int piece_on_target_square = squares[target_square];
     const bool is_right_edge = (start_square % 8 == 7);
     if (!is_right_edge && Piece::isColor(piece_on_target_square, Piece::Black)) {
-        push_move(start_square, target_square);
+        if (promotion_move) {
+            generate_pawn_promotion(start_square, target_square, piece);
+        } else {
+            push_move(start_square, target_square);
+        }
     }
 
     // diagonal left
@@ -103,7 +107,11 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
     piece_on_target_square = squares[target_square];
     const bool is_left_edge = (start_square % 8 == 0);
     if (!is_left_edge && Piece::isColor(piece_on_target_square, Piece::Black)) {
-        push_move(start_square, target_square);
+        if (promotion_move) {
+            generate_pawn_promotion(start_square, target_square, piece);
+        } else {
+            push_move(start_square, target_square);
+        }
     }
 
     // front
@@ -115,7 +123,11 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
         return;
     }
 
-    push_move(start_square, target_square);
+    if (promotion_move) {
+        generate_pawn_promotion(start_square, target_square, piece);
+    } else {
+        push_move(start_square, target_square);
+    }
 
     // starting pawn positions
     if ((start_square / 8) == 6) {
@@ -133,21 +145,24 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
 
 void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
 {
-    if ((start_square / 8) == 7) {
-        return;
-    }
+    assert(Piece::isColor(piece, Piece::Black));
+    assert(Piece::isType(piece, Piece::Pawn));
+    assert(start_square >= 0 && start_square < 64);
+    assert(squares[start_square] == piece);
+    assert((start_square / 8) >= 1 && (start_square / 8) <= 6);
 
-    // TODO: pawn promotion
-    if ((start_square / 8) == 6) {
-        return;
-    }
+    bool promotion_move = (start_square / 8) == 6;
 
     // diagonal down right
     int target_square = start_square + 9;
     unsigned int piece_on_target_square = squares[target_square];
     const bool is_right_edge = (start_square % 8 == 7);
     if (!is_right_edge && Piece::isColor(piece_on_target_square, Piece::White)) {
-        push_move(start_square, target_square);
+        if (promotion_move) {
+            generate_pawn_promotion(start_square, target_square, piece);
+        } else {
+            push_move(start_square, target_square);
+        }
     }
 
     // diagonal down left
@@ -155,7 +170,11 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
     piece_on_target_square = squares[target_square];
     const bool is_left_edge = (start_square % 8 == 0);
     if (!is_left_edge && Piece::isColor(piece_on_target_square, Piece::White)) {
-        push_move(start_square, target_square);
+        if (promotion_move) {
+            generate_pawn_promotion(start_square, target_square, piece);
+        } else {
+            push_move(start_square, target_square);
+        }
     }
 
     // front
@@ -167,7 +186,11 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
         return;
     }
 
-    push_move(start_square, target_square);
+    if (promotion_move) {
+        generate_pawn_promotion(start_square, target_square, piece);
+    } else {
+        push_move(start_square, target_square);
+    }
 
     // starting pawn positions
     if ((start_square / 8) == 1) {
@@ -180,6 +203,27 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
         }
 
         push_move(start_square, target_square);
+    }
+}
+
+void Board::generate_pawn_promotion(int start_square, int target_square, unsigned int piece)
+{
+    assert(Piece::isType(piece, Piece::Pawn));
+    assert(start_square >= 0 && start_square < 64);
+    assert(target_square >= 0 && target_square < 64);
+    assert(squares[start_square] == piece);
+    assert((target_square / 8) == 0 || (target_square / 8) == 7);
+
+    if (Piece::isColor(piece, Piece::White)) {
+        push_move(start_square, target_square, Piece::Queen | Piece::White);
+        push_move(start_square, target_square, Piece::Rook | Piece::White);
+        push_move(start_square, target_square, Piece::Bishop | Piece::White);
+        push_move(start_square, target_square, Piece::Knight | Piece::White);
+    } else {
+        push_move(start_square, target_square, Piece::Queen | Piece::Black);
+        push_move(start_square, target_square, Piece::Rook | Piece::Black);
+        push_move(start_square, target_square, Piece::Bishop | Piece::Black);
+        push_move(start_square, target_square, Piece::Knight | Piece::Black);
     }
 }
 
