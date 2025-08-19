@@ -10,18 +10,18 @@ sf::Color highlightColor(255, 165, 0, 128); //orangish transparent
 sf::Color selectedColor(255, 0, 0, 128); // reddish transparent
 
 std::map<int, int> piece_to_figure_idx = {
-    { Piece::Black | Piece::King,   0 },
-    { Piece::Black | Piece::Queen,  1 },
-    { Piece::Black | Piece::Bishop, 2 },
-    { Piece::Black | Piece::Knight, 3 },
-    { Piece::Black | Piece::Rook,   4 },
-    { Piece::Black | Piece::Pawn,   5 },
-    { Piece::White | Piece::King,   6 },
-    { Piece::White | Piece::Queen,  7 },
-    { Piece::White | Piece::Bishop, 8 },
-    { Piece::White | Piece::Knight, 9 },
-    { Piece::White | Piece::Rook,  10 },
-    { Piece::White | Piece::Pawn,  11 }
+    { Piece::White | Piece::King,   0 },
+    { Piece::White | Piece::Queen,  1 },
+    { Piece::White | Piece::Bishop, 2 },
+    { Piece::White | Piece::Knight, 3 },
+    { Piece::White | Piece::Rook,   4 },
+    { Piece::White | Piece::Pawn,   5 },
+    { Piece::Black | Piece::King,   6 },
+    { Piece::Black | Piece::Queen,  7 },
+    { Piece::Black | Piece::Bishop, 8 },
+    { Piece::Black | Piece::Knight, 9 },
+    { Piece::Black | Piece::Rook,  10 },
+    { Piece::Black | Piece::Pawn,  11 }
 };
 
 
@@ -111,11 +111,16 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
         return;
     }
     
-    for (Move move: *moves) {
-        if (move.start_square == old_idx && move.target_square == new_idx) {
-            // TODO: handle pawn promotions*
-            board = move.resulting_board;
-            break;
+    if (DEBUG_ALLOW_ILLEGAL_MOVES) {
+        (*board)[new_idx] = (*board)[old_idx];
+        (*board)[old_idx] = Piece::None;
+    } else {
+        for (Move move: *moves) {
+            if (move.start_square == old_idx && move.target_square == new_idx) {
+                // TODO: handle pawn promotions*
+                board = move.resulting_board;
+                break;
+            }
         }
     }
     

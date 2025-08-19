@@ -8,6 +8,8 @@
 #include "board.h"
 #include "move.h"
 
+const bool DEBUG_ALLOW_ILLEGAL_MOVES = false;
+
 class Game {
 public:
 

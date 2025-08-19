@@ -1,6 +1,8 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include <iostream>
+
 class Piece {
     public:
 
@@ -10,7 +12,7 @@ class Piece {
     }
 
     static unsigned int flipColor(unsigned int color) {
-        return White & color ? Black : White;
+        return (White & color) ? Black : White;
     }
 
     static bool isSlidingPiece (unsigned int piece) {

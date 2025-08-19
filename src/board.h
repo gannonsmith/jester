@@ -41,7 +41,8 @@ public:
     // clears move list and generates moves
     void generate_moves();
 
-    void generate_pawn_moves(int start_square, unsigned int piece);
+    void generate_white_pawn_moves(int start_square, unsigned int piece);
+    void generate_black_pawn_moves(int start_square, unsigned int piece);
     void generate_sliding_moves(int start_square, unsigned int piece);
     void generate_knight_moves(int start_square, unsigned int piece);
     
