@@ -42,7 +42,8 @@ public:
     Move(int start_square, int target_square): 
         start_square(start_square), 
         target_square(target_square),
-        promotion_piece(Piece::None)
+        promotion_piece(Piece::None),
+        is_castle(false)
     {
         //
     }
@@ -50,7 +51,17 @@ public:
     Move(int start_square, int target_square, unsigned int promotion_piece): 
         start_square(start_square), 
         target_square(target_square),
-        promotion_piece(promotion_piece)
+        promotion_piece(promotion_piece),
+        is_castle(false)
+    {
+        //
+    }
+
+    Move(int start_square, int target_square, bool is_castle): 
+        start_square(start_square), 
+        target_square(target_square),
+        promotion_piece(Piece::None),
+        is_castle(is_castle)
     {
         //
     }
@@ -58,6 +69,7 @@ public:
     const int start_square;
     const int target_square;
     const unsigned int promotion_piece = Piece::None; // for pawn promotions
+    const bool is_castle = false; // for castling
     Board* resulting_board;
 };
 

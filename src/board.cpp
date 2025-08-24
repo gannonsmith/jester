@@ -43,6 +43,23 @@ void Board::initialize_with_fen(const std::string& fen)
         std::cerr << "Invalid FEN: " << fen << std::endl;
         return;
     }
+
+    int castle_idx = end_of_fen + 3;
+    while (fen[castle_idx] != ' ') {
+        char c = fen[castle_idx];
+        if (c == '-') {
+            break;
+        } else if (c == 'K') {
+            castle.white_king = true;
+        } else if (c == 'Q') {
+            castle.white_queen = true;
+        } else if (c == 'k') {
+            castle.black_king = true;
+        } else if (c == 'q') {
+            castle.black_queen = true;
+        }
+        castle_idx++;
+    }
 }
 
 
@@ -259,7 +276,6 @@ void Board::generate_sliding_moves(int start_square, unsigned int piece)
     }
 }
 
-
 void Board::generate_knight_moves(int start_square, unsigned int piece)
 {
     unsigned int piece_color = piece & Piece::Color;
@@ -275,5 +291,27 @@ void Board::generate_knight_moves(int start_square, unsigned int piece)
 
             push_move(start_square, target_square);
         }
+    }
+}
+
+void Board::generate_castle_moves()
+{
+    if (color_to_move == Piece::White) {
+        // King side
+        if (castle.white_king) {
+            // spaces are clear
+            if (squares[62] && squares[61]) {
+                // spaces aren't under attack
+                
+            }
+        }
+
+        // Queen side
+        if (castle.white_queen) {
+
+        }
+
+    } else if (color_to_move == Piece::Black) {
+
     }
 }

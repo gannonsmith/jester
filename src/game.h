@@ -9,6 +9,7 @@
 #include "move.h"
 
 const bool DEBUG_ALLOW_ILLEGAL_MOVES = false;
+const int LEVELS_DEEP = 2;
 
 class Game {
 public:
@@ -36,6 +37,7 @@ public:
 
     void highlight_moves(int start_square);
     void generate();
+    void recursive_generate(Board* b, int level);
 
 
 private:

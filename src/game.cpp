@@ -80,7 +80,7 @@ void highlight(int square_idx) {
 }
 
 void Game::highlight_moves(int start_square) {
-    for (Move move: *moves) {
+    for (Move& move: *moves) {
         if (move.start_square == start_square) {
             highlight(move.start_square);
             highlight(move.target_square);
@@ -89,19 +89,35 @@ void Game::highlight_moves(int start_square) {
 }
 
 void Game::generate() {
-    board->generate_moves();
+    recursive_generate(board, LEVELS_DEEP);
     moves = board->get_moves();
-    std::cout << moves->size() << std::endl;
+}
+
+void Game::recursive_generate(Board* b, int level) {
+    if (level <= 0) {
+        return;
+    }
+    b->generate_moves();
+
+    // early return
+    if (level == 1) {
+        return;
+    }
+    for (Move& move: *b->get_moves()) {
+        recursive_generate(move.resulting_board, level-1);
+    }
 }
 
 void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
 {
+    std::cout << "move called" << std::endl;
     clear_highlights();
     
     int old_idx = to_index(oldPos);
     int new_idx = to_index(newPos);
 
     if (old_idx == new_idx) {
+        std::cout << "in place" << std::endl;
         return;
     }
 
@@ -111,6 +127,7 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
         return;
     }
     
+    bool valid_move = false;
     if (DEBUG_ALLOW_ILLEGAL_MOVES) {
         (*board)[new_idx] = (*board)[old_idx];
         (*board)[old_idx] = Piece::None;
@@ -121,19 +138,29 @@ void Game::move(sf::Vector2f oldPos, sf::Vector2f newPos)
                     // TODO: let user choose promotion piece
                     unsigned int chosen_promotion = Piece::Queen | Piece::White; // for example
                     if (move.promotion_piece == chosen_promotion) {
-                        board = move.resulting_board;
+                        Board* new_board = new Board(*move.resulting_board);
+                        delete board;
+                        board = new_board;
+                        valid_move = true;
+                        break;
                     } else {
                         continue;
                     }
                 } else {
-                    board = move.resulting_board;
+                    Board* new_board = new Board(*move.resulting_board);
+                    delete board;
+                    board = new_board;
+                    valid_move = true;
+                    break;
                 }
-                break;
             }
         }
     }
     
     load_position();
+    if (valid_move) {
+        generate();
+    }
 
     highlight(to_index(oldPos));
     highlight(to_index(newPos));
@@ -153,7 +180,6 @@ void Game::load_position()
             f.back().setPosition(size*j,size*i);
         }
     }
-    generate();
 }
 
 void Game::preload_figure_template(sf::Texture& t)
@@ -178,6 +204,7 @@ void Game::render()
     preload_figure_template(t);
 
     load_position();
+    generate();
 
     bool isMove = false;
     float dx=0, dy=0;
