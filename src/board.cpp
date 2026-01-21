@@ -63,15 +63,23 @@ void Board::initialize_with_fen(const std::string& fen)
 }
 
 
-void Board::push_move(int start_square, int target_square) {
-    moves.emplace_back(start_square, target_square);
-    moves.back().resulting_board = new Board(*this, start_square, target_square);
+void Board::push_move(int start_square, int target_square, bool is_castle) {
+    if (is_castle) {
+        std::cout << "pushing castle move" << std::endl;
+    }
+    moves.emplace_back(start_square, target_square, is_castle);
+    moves.back().resulting_board = new Board(*this, start_square, target_square, is_castle);
 }
 
 void Board::push_move(int start_square, int target_square, unsigned int piece) {
     std::cout << "Pushing move with promotion: " << start_square << " to " << target_square << " with piece " << piece << std::endl;
     moves.emplace_back(start_square, target_square, piece);
     moves.back().resulting_board = new Board(*this, start_square, target_square, piece);
+}
+
+bool Board::under_check(int target_square) {
+    // TODO
+    return false;
 }
 
 void Board::generate_moves()
@@ -95,7 +103,11 @@ void Board::generate_moves()
         if (Piece::isType(piece, Piece::Knight)) {
             generate_knight_moves(start_square, piece);
         }
+        if (Piece::isType(piece, Piece::King)) {
+            generate_king_moves(start_square, piece);
+        }
     }
+    generate_castle_moves();
 }
 
 void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
@@ -116,7 +128,7 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
         if (promotion_move) {
             generate_pawn_promotion(start_square, target_square, piece);
         } else {
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
         }
     }
 
@@ -128,7 +140,7 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
         if (promotion_move) {
             generate_pawn_promotion(start_square, target_square, piece);
         } else {
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
         }
     }
 
@@ -144,7 +156,7 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
     if (promotion_move) {
         generate_pawn_promotion(start_square, target_square, piece);
     } else {
-        push_move(start_square, target_square);
+        push_move(start_square, target_square, false);
     }
 
     // starting pawn positions
@@ -157,7 +169,7 @@ void Board::generate_white_pawn_moves(int start_square, unsigned int piece)
             return;
         }
 
-        push_move(start_square, target_square);
+        push_move(start_square, target_square, false);
     }
 }
 
@@ -179,7 +191,7 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
         if (promotion_move) {
             generate_pawn_promotion(start_square, target_square, piece);
         } else {
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
         }
     }
 
@@ -191,7 +203,7 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
         if (promotion_move) {
             generate_pawn_promotion(start_square, target_square, piece);
         } else {
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
         }
     }
 
@@ -207,7 +219,7 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
     if (promotion_move) {
         generate_pawn_promotion(start_square, target_square, piece);
     } else {
-        push_move(start_square, target_square);
+        push_move(start_square, target_square, false);
     }
 
     // starting pawn positions
@@ -220,7 +232,7 @@ void Board::generate_black_pawn_moves(int start_square, unsigned int piece)
             return;
         }
 
-        push_move(start_square, target_square);
+        push_move(start_square, target_square, false);
     }
 }
 
@@ -266,7 +278,7 @@ void Board::generate_sliding_moves(int start_square, unsigned int piece)
             }
 
             //std::cout << "generated move" << std::endl;
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
 
             // blocked by enemy piece
             if (Piece::isColor(piece_on_target_square, opponent_color)) {
@@ -289,29 +301,86 @@ void Board::generate_knight_moves(int start_square, unsigned int piece)
                 continue;
             }
 
-            push_move(start_square, target_square);
+            push_move(start_square, target_square, false);
+        }
+    }
+}
+
+void Board::generate_king_moves(int start_square, unsigned int piece) {
+    unsigned int piece_color = piece & Piece::Color;
+    unsigned int opponent_color = Piece::flipColor(piece_color);
+    for (int direction_index = 0; direction_index < 8; direction_index++) {
+        if (NUM_SQUARES_TO_EDGE[start_square][direction_index] > 0) {
+
+            int target_square = start_square + DIRECTION_OFFSETS[direction_index];
+            unsigned int piece_on_target_square = squares[target_square];
+
+            // blocked by friendly piece
+            if (Piece::isColor(piece_on_target_square, piece_color)) {
+                continue;
+            }
+
+            if (under_check(target_square)) {
+                continue;
+            }
+
+            //std::cout << "generated move" << std::endl;
+            push_move(start_square, target_square, false);
+
+            // blocked by enemy piece
+            if (Piece::isColor(piece_on_target_square, opponent_color)) {
+                continue;
+            }
         }
     }
 }
 
 void Board::generate_castle_moves()
 {
+
     if (color_to_move == Piece::White) {
+        int start_square = 60;
         // King side
         if (castle.white_king) {
+            std::cout << "white has castle available" << std::endl;
+            if (!squares[61] && !squares[62]) {
             // spaces are clear
-            if (squares[62] && squares[61]) {
-                // spaces aren't under attack
-                
+                if (!under_check(60) && !under_check(61) && !under_check(62) && !under_check(63)) {
+                    // spaces aren't under attack
+                    push_move(start_square, 62, true);
+                }
             }
         }
 
         // Queen side
         if (castle.white_queen) {
-
+            if (!squares[59] && !squares[58] && !squares[57]) {
+                if (!under_check(60) && !under_check(59) && !under_check(58) && !under_check(57) && !under_check(56)) {
+                    push_move(start_square, 58, true);
+                }
+            }
         }
 
     } else if (color_to_move == Piece::Black) {
+        int start_square = 4;
+        // King side
+        if (castle.black_king) {
+            if (!squares[5] && !squares[6]) {
+            // spaces are clear
+                if (!under_check(4) && !under_check(5) && !under_check(6) && !under_check(7)) {
+                    // spaces aren't under attack
+                    push_move(start_square, 6, true);
+                }
+            }
+        }
 
+        // Queen side
+        if (castle.black_queen) {
+            if (!squares[1] && !squares[2] && !squares[3]) {
+                if (!under_check(0) && !under_check(1) && !under_check(2) && !under_check(3) && !under_check(4)) {
+                    push_move(start_square, 2, true);
+                }
+            }
+        }
     }
 }

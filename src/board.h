@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include "piece.h"
 #include "move.h"
@@ -40,6 +41,49 @@ public:
         castle = t.castle;
     }
 
+    Board(Board& t, int start_square, int target_square, bool is_castle) {
+        squares = t.squares;
+        castle = t.castle;
+        if (is_castle) {
+            std::cout << "in castle constructor" << std::endl;
+            if (start_square == 60) {
+                // white
+                castle.white_king = false;
+                castle.white_queen = false;
+                if (target_square == 62) {
+                    squares[target_square] = squares[start_square];
+                    squares[start_square] = Piece::None;
+                    squares[61] = squares[63];
+                    squares[63] = Piece::None;
+                } else {
+                    squares[target_square] = squares[start_square];
+                    squares[start_square] = Piece::None;
+                    squares[59] = squares[56];
+                    squares[56] = Piece::None;
+                }
+            } else {
+                // black
+                castle.black_king = false;
+                castle.black_queen = false;
+                if (target_square == 6) {
+                    squares[target_square] = squares[start_square];
+                    squares[start_square] = Piece::None;
+                    squares[5] = squares[7];
+                    squares[7] = Piece::None;
+                } else {
+                    squares[target_square] = squares[start_square];
+                    squares[start_square] = Piece::None;
+                    squares[3] = squares[0];
+                    squares[0] = Piece::None;
+                }
+            }
+        } else {
+            squares[target_square] = squares[start_square];
+            squares[start_square] = Piece::None;
+        }
+        color_to_move = Piece::flipColor(t.color_to_move);
+    }
+
     // constructor for move with promotion
     Board(Board& t, int start_square, int target_square, unsigned int piece) {
         squares = t.squares;
@@ -61,10 +105,12 @@ public:
         return &moves;
     }
 
-    void push_move(int start_square, int target_square);
+    void push_move(int start_square, int target_square, bool castle);
 
     // push move with promotion (pawns only)
     void push_move(int start_square, int target_square, unsigned int piece);
+
+    bool under_check(int target_square);
 
     // clears move list and generates moves
     void generate_moves();
@@ -74,6 +120,7 @@ public:
     void generate_pawn_promotion(int start_square, int target_square, unsigned int piece);
     void generate_sliding_moves(int start_square, unsigned int piece);
     void generate_knight_moves(int start_square, unsigned int piece);
+    void generate_king_moves(int start_square, unsigned int piece);
     void generate_castle_moves();
     
 
