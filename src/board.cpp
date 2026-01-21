@@ -77,8 +77,101 @@ void Board::push_move(int start_square, int target_square, unsigned int piece) {
     moves.back().resulting_board = new Board(*this, start_square, target_square, piece);
 }
 
-bool Board::under_check(int target_square) {
+bool Board::under_check(int check_square) {
     // TODO
+    int rank = check_square / 8;
+    int file = check_square % 8;
+
+    unsigned int opponent_color = Piece::flipColor(color_to_move);
+
+    // rook-type moves
+    for (int direction_index = 0; direction_index < 4; direction_index++) {
+        for (int n = 0; n < NUM_SQUARES_TO_EDGE[check_square][direction_index]; n++) {
+
+            int target_square = check_square + DIRECTION_OFFSETS[direction_index] * (n+1);
+            unsigned int piece_on_target_square = squares[target_square];
+
+            if (Piece::isPiece(piece_on_target_square)) {
+                if (Piece::isColor(piece_on_target_square, opponent_color)) {
+                    if (n == 0 && Piece::isType(piece_on_target_square, Piece::King)) {
+                        return true;
+                    }
+
+                    if (Piece::isType(piece_on_target_square, Piece::Rook) || Piece::isType(piece_on_target_square, Piece::Queen)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    // diagonal-type moves
+    for (int direction_index = 4; direction_index < 8; direction_index++) {
+        for (int n = 0; n < NUM_SQUARES_TO_EDGE[check_square][direction_index]; n++) {
+
+            int target_square = check_square + DIRECTION_OFFSETS[direction_index] * (n+1);
+            unsigned int piece_on_target_square = squares[target_square];
+
+            if (Piece::isPiece(piece_on_target_square)) {
+                if (Piece::isColor(piece_on_target_square, opponent_color)) {
+                    if (n == 0 && Piece::isType(piece_on_target_square, Piece::King)) {
+                        return true;
+                    }
+
+                    if (Piece::isType(piece_on_target_square, Piece::Bishop) || Piece::isType(piece_on_target_square, Piece::Queen)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    // knight-type moves
+    for (int target_square = 0; target_square < 64; target_square++) {
+        if (KNIGHT_MOVES[check_square][target_square]) {
+            unsigned int piece_on_target_square = squares[target_square];
+
+            if (Piece::isPiece(piece_on_target_square)) {
+                if (Piece::isColor(piece_on_target_square, opponent_color)) {
+                    if (Piece::isType(piece_on_target_square, Piece::Knight)) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    // pawn moves
+    if (color_to_move == Piece::White) {
+        if (rank > 0 && file > 0) {
+            unsigned int piece = squares[check_square - 9];
+            if (Piece::isColor(piece, opponent_color) && Piece::isType(piece, Piece::Pawn)) {
+                return true;
+            }
+        }
+        if (rank > 0 && file < 8) {
+            unsigned int piece = squares[check_square - 7];
+            if (Piece::isColor(piece, opponent_color) && Piece::isType(piece, Piece::Pawn)) {
+                return true;
+            }
+        }
+    } else {
+        if (rank < 8 && file > 0) {
+            unsigned int piece = squares[check_square + 7];
+            if (Piece::isColor(piece, opponent_color) && Piece::isType(piece, Piece::Pawn)) {
+                return true;
+            }
+        }
+        if (rank < 8 && file < 8) {
+            unsigned int piece = squares[check_square + 9];
+            if (Piece::isColor(piece, opponent_color) && Piece::isType(piece, Piece::Pawn)) {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
