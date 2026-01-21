@@ -78,7 +78,9 @@ void Board::push_move(int start_square, int target_square, unsigned int piece) {
 }
 
 bool Board::under_check(int check_square) {
-    // TODO
+    // TODO, this really should be calculated once, kind of a running board of "under attack"
+    // // TODO, if piece (king) is blocking what would be a check anyways (think |.|K|Q|)
+                
     int rank = check_square / 8;
     int file = check_square % 8;
 

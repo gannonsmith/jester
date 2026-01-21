@@ -9,7 +9,7 @@
 #include "move.h"
 
 const bool DEBUG_ALLOW_ILLEGAL_MOVES = false;
-const int LEVELS_DEEP = 2;
+const int LEVELS_DEEP = 4;
 
 class Game {
 public:
